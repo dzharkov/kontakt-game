@@ -1,0 +1,39 @@
+html {
+    background:transparent url(/static/escheresque.png) repeat;
+}
+
+body {
+    background-color: transparent;
+}
+
+.wrapper {
+    background-color: white;
+    padding: 30px 12% 80px;
+    margin: 50px 0 50px 0;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.25);
+}
+
+.hero-unit-custom {
+    color: white;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .4), 0 0 30px rgba(0, 0, 0, .075);
+    background: #020031;
+    background: -moz-linear-gradient(45deg, #020031 0%, #6D3353 100%);
+    background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,#020031), color-stop(100%,#6D3353));
+    background: -webkit-linear-gradient(45deg, #020031 0%,#6D3353 100%);
+    background: -o-linear-gradient(45deg, #020031 0%,#6D3353 100%);
+    background: -ms-linear-gradient(45deg, #020031 0%,#6D3353 100%);
+    background: linear-gradient(45deg, #020031 0%,#6D3353 100%);
+}
+
+.hero-unit-custom h1 {
+    font-size: 120px;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.hero-unit-custom p {
+    font-size: 40px;
+    font-weight: 200;
+    line-height: 1.25;
+}

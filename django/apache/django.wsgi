@@ -1,7 +1,8 @@
 import os
 import sys
 
-path = '/home/ubuntu/kontakt-game/django'
+dn = os.path.dirname
+path = os.path.abspath( dn(dn(__file__)) )
 if path not in sys.path:
     sys.path.append(path)
 
