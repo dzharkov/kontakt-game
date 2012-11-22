@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from managers import *
@@ -14,11 +15,20 @@ class Game(models.Model):
     guessed_word = create_word_field()
     guessed_letters = models.PositiveSmallIntegerField()
 
+    def letters_left(self):
+        return len(self.guessed_word) - self.guessed_letters
+
+    def available_word_part(self):
+        return self.guessed_word[:self.guessed_letters]
+
+    def available_word_part_with_asterisks(self):
+        return self.available_word_part() + ("*" * self.letters_left())
+
 class Contact(models.Model):
 
     objects = ContactManager()
 
-    game = models.ForeignKey(Game)
+    game = models.ForeignKey(Game, related_name="contacts")
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -33,5 +43,11 @@ class Contact(models.Model):
 
     def is_canceled(self):
         return False
+
+    def is_accepted(self):
+        return self.connected_at != None
+
+    def accepted_seconds_ago(self):
+        return (datetime.now()-self.connected_at.replace(tzinfo=None)).seconds
 
 
