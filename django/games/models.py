@@ -32,6 +32,9 @@ class Game(models.Model):
             return False
         return self.available_word_part() == word[:self.guessed_letters]
 
+    def has_active_accepted_contacts(self):
+        return self.contacts.active_accepted().count() > 0
+
 class Contact(models.Model):
 
     objects = ContactManager()
@@ -66,3 +69,8 @@ class Contact(models.Model):
 
     def can_be_connected_word(self, word):
         return self.game.can_be_contact_word(word)
+
+    def accept(self, user, word):
+        self.connected_at = timezone.now()
+        self.connected_user = user
+        self.connected_word = word
