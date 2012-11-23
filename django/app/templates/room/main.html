@@ -14,7 +14,7 @@
                 {% if contact.is_accepted %}
                     Принят {{ contact.connected_user }} {{ contact.accepted_seconds_ago }} с. назад
                 {% else %}
-                    {% if not is_user_master and contact.author != request.user %}
+                    {% if game.master != request.user and contact.author != request.user %}
                         <input type="text" name="word">
                         <a href="#">Замкнуть</a>
                     {% endif %}

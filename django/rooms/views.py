@@ -16,6 +16,4 @@ def room(request, id):
     user.backend = 'django.contrib.auth.backends.ModelBackend'
     login(request, user)
 
-    is_user_master = user == game.master
-
-    return { 'game' : game, 'is_user_master' : is_user_master }
+    return { 'game' : game }
