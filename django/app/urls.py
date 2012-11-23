@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'app.views.home.index'),
     url(r'^room/', include('rooms.urls')),
+    url(r'^game/', include('games.urls')),
     url(r'^account/register$', 'app.views.account.register'),
     url(r'^account/login$', 'app.views.account.login'),
     url(r'^about$', 'app.views.home.about'),
