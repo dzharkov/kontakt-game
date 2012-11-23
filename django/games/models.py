@@ -27,6 +27,11 @@ class Game(models.Model):
     def available_word_part_with_asterisks(self):
         return self.available_word_part() + ("*" * self.letters_left())
 
+    def can_be_contact_word(self, word):
+        if len(word) < self.guessed_letters + 1:
+            return False
+        return self.available_word_part() == word[:self.guessed_letters]
+
 class Contact(models.Model):
 
     objects = ContactManager()
@@ -59,3 +64,5 @@ class Contact(models.Model):
     def seconds_left(self):
         return max(0, settings.CONTACT_CHECKING_TIMEOUT  - self.accepted_seconds_ago())
 
+    def can_be_connected_word(self, word):
+        return self.game.can_be_contact_word(word)
