@@ -2,6 +2,8 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 
+from app import settings
+
 from managers import *
 
 def create_word_field(*args, **kwargs):
@@ -48,6 +50,12 @@ class Contact(models.Model):
     def is_accepted(self):
         return self.connected_at != None
 
+    def is_active(self):
+        return self.seconds_left() > 0
+
     def accepted_seconds_ago(self):
         return (timezone.now()-self.connected_at.replace(tzinfo=None)).seconds
+
+    def seconds_left(self):
+        return max(0, settings.CONTACT_CHECKING_TIMEOUT  - self.accepted_seconds_ago())
 
