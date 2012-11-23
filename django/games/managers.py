@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db import models
 from django.db.models import Q
-from django.utils.log import logger
 
 from app import settings
 
