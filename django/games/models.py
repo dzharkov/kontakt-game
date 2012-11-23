@@ -1,6 +1,7 @@
-from datetime import datetime
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
+
 from managers import *
 
 def create_word_field(*args, **kwargs):
@@ -48,6 +49,5 @@ class Contact(models.Model):
         return self.connected_at != None
 
     def accepted_seconds_ago(self):
-        return (datetime.now()-self.connected_at.replace(tzinfo=None)).seconds
-
+        return (timezone.now()-self.connected_at.replace(tzinfo=None)).seconds
 
