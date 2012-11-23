@@ -1,28 +1,13 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
 from django.utils import timezone
-from django.db import models,connection
+from django.db import models
 from django.db.models import Q
 from django.utils.log import logger
 
 from app import settings
 
 class CachingManager(models.Manager):
-    def lock(self):
-        cursor = connection.cursor()
-        table = self.model._meta.db_table
-        logger.debug("Locking table %s" % table)
-        cursor.execute("LOCK TABLES %s READ WRITE" % table)
-        row = cursor.fetchone()
-        return row
-
-    def unlock(self):
-        cursor = connection.cursor()
-        table = self.model._meta.db_table
-        cursor.execute("UNLOCK TABLES")
-        row = cursor.fetchone()
-        return row
-
     def get_by_id(self,id):
         return self.get(pk=id)
 
