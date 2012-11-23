@@ -6,11 +6,15 @@ from django.db.models import Q
 
 from app import settings
 
-class GameManager(models.Manager):
+class CachingManager(models.Manager):
+    def get_by_id(self,id):
+        return self.get(pk=id)
+
+class GameManager(CachingManager):
     def get_dummy_game(self):
         return self.get(pk=1)
 
-class ContactManager(models.Manager):
+class ContactManager(CachingManager):
     use_for_related_fields = True
 
     def active(self):
