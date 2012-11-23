@@ -51,7 +51,7 @@ class Contact(models.Model):
         return self.connected_at != None
 
     def is_active(self):
-        return self.seconds_left() > 0
+        return not self.is_accepted() or self.seconds_left() > 0
 
     def accepted_seconds_ago(self):
         return (timezone.now()-self.connected_at.replace(tzinfo=None)).seconds
