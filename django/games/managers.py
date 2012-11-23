@@ -1,12 +1,28 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
 from django.utils import timezone
-from django.db import models
+from django.db import models,connection
 from django.db.models import Q
+from django.utils.log import logger
 
 from app import settings
 
 class CachingManager(models.Manager):
+    def lock(self):
+        cursor = connection.cursor()
+        table = self.model._meta.db_table
+        logger.debug("Locking table %s" % table)
+        cursor.execute("LOCK TABLES %s READ WRITE" % table)
+        row = cursor.fetchone()
+        return row
+
+    def unlock(self):
+        cursor = connection.cursor()
+        table = self.model._meta.db_table
+        cursor.execute("UNLOCK TABLES")
+        row = cursor.fetchone()
+        return row
+
     def get_by_id(self,id):
         return self.get(pk=id)
 
@@ -17,8 +33,14 @@ class GameManager(CachingManager):
 class ContactManager(CachingManager):
     use_for_related_fields = True
 
+    def active_accepted_query(self):
+        return Q(connected_at__isnull=False, connected_at__gt=ContactManager.get_earliest_time_of_active_contacts())
+
     def active(self):
-        return self.filter(Q(connected_at__isnull=True) | Q(connected_at__isnull=False, connected_at__gt=ContactManager.get_earliest_time_of_active_contacts()))
+        return self.filter(Q(connected_at__isnull=True) | self.active_accepted_query())
+
+    def active_accepted(self):
+        return self.active().filter(self.active_accepted_query())
 
     def create_dummy_contacts_for_game(self):
         from django.db import connection, transaction
