@@ -1,22 +1,15 @@
 from django.utils import timezone
-from django.db import models
-from django.contrib.auth.models import User
 
 from app import settings
 
-from managers import *
+class Game(object):
 
-def create_word_field(*args, **kwargs):
-    kwargs['max_length']=30
-    return models.CharField(*args, **kwargs)
+    def __init__(self):
+        self.master = None
+        self.guessed_word = None
+        self.guessed_letters = None
 
-class Game(models.Model):
-
-    objects = GameManager()
-
-    master = models.ForeignKey(User)
-    guessed_word = create_word_field()
-    guessed_letters = models.PositiveSmallIntegerField()
+        self.contacts = None
 
     def letters_left(self):
         return len(self.guessed_word) - self.guessed_letters
@@ -35,22 +28,21 @@ class Game(models.Model):
     def has_active_accepted_contacts(self):
         return self.contacts.active_accepted().count() > 0
 
-class Contact(models.Model):
+class Contact(object):
 
-    objects = ContactManager()
+    def __init__(self, *args, **kwargs):
+        self.game = None
 
-    game = models.ForeignKey(Game, related_name="contacts")
+        self.created_at = None
 
-    created_at = models.DateTimeField(auto_now_add=True)
+        self.author = None
 
-    author = models.ForeignKey(User, related_name="all_contacts")
+        self.word = None
+        self.description = None
 
-    word = create_word_field()
-    description = models.CharField(max_length=140)
-
-    connected_user = models.ForeignKey(User, null=True)
-    connected_word = create_word_field(null=True)
-    connected_at = models.DateTimeField(null=True)
+        self.connected_user = None
+        self.connected_word = None
+        self.connected_at = None
 
     def is_canceled(self):
         return False

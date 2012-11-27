@@ -1,32 +1,12 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
 from django.utils import timezone
-from django.db import models
-from django.db.models import Q
 
 from app import settings
 
-class CachingManager(models.Manager):
-    def get_by_id(self,id):
-        return self.get(pk=id)
-
-class GameManager(CachingManager):
-    def get_dummy_game(self):
-        return self.get(pk=1)
-
-class ContactManager(CachingManager):
-    use_for_related_fields = True
-
-    def active_accepted_query(self):
-        return Q(connected_at__isnull=False, connected_at__gt=ContactManager.get_earliest_time_of_active_contacts())
-
-    def active(self):
-        return self.filter(Q(connected_at__isnull=True) | self.active_accepted_query())
-
-    def active_accepted(self):
-        return self.active().filter(self.active_accepted_query())
-
-    def create_dummy_contacts_for_game(self):
+class ContactManager(object):
+    @staticmethod
+    def create_dummy_contacts_for_game():
         from django.db import connection, transaction
 
         cursor = connection.cursor()

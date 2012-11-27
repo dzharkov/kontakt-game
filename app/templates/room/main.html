@@ -2,31 +2,9 @@
 
 {% block body %}
 Вы: {{ request.user }}<br/>
-Слово: {{ game.available_word_part_with_asterisks }}<br/>
 <h3>Контакты</h3>
 
 <table border="1">
-    {% for contact in game.contacts.active  %}
-        <tr>
-            <td>{{ contact.author }}</td>
-            <td>{{ contact.description }}</td>
-            <td>
-                {% if contact.is_accepted %}
-                    Принят {{ contact.connected_user }} {{ contact.seconds_left }} с. осталось
-                {% else %}
-                    {% if game.master != request.user and contact.author != request.user %}
-                        <input type="text" name="word">
-                        <a href="#">Замкнуть</a>
-                    {% endif %}
-                {% endif %}
-                {% ifequal contact.author request.user %}
-                    <a href="#">Отменить</a>
-                {% endifequal %}
-                {% if is_user_master %}
-                    <a href="#">Сломать</a>
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
+
 </table>
 {% endblock %}
