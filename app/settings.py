@@ -132,7 +132,8 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'south',
     'games',
-    'rooms'
+    'rooms',
+    'kontakt_tornado',
 )
 
 # A sample logging configuration. The only tangible logging
