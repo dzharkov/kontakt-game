@@ -1,10 +1,43 @@
 {% extends 'app/base.html' %}
 
 {% block body %}
+    <script>
+        var conn;
+        function open_websocket(){
+            function show_message(message){
+                var el = document.createElement('div');
+                el.innerHTML = message;
+                document.body.appendChild(el);
+            }
+
+            conn = io.connect('http://localhost:8001');
+
+            conn.on('connect', function() {
+                show_message('connected');
+            });
+
+
+            conn.on('room_state_update', function(obj) {
+                console.debug(obj);
+                alert('room_update');
+            });
+
+            conn.on('accepting_result', function(contact_id, result) {
+                show_message('accepted: ' + contact_id + ', ' + result)
+            });
+
+            conn.on('disconnect', function() {
+                show_message('disconnected');
+            });
+        }
+    </script>
 Вы: {{ request.user }}<br/>
 <h3>Контакты</h3>
+    <a href="#" onclick="open_websocket();return false;">open</a><br/>
+    <a href="#" onclick="conn.emit('room_state_request');return false;">Update</a><br/>
+    <a href="#" onclick="conn.emit('accept', 13, 'word');return false;">accept</a><br/>
+    <iframe id="_hidden" style="display:none"></iframe>
+    <h2>Messages</h2>
+    <hr/>
 
-<table border="1">
-
-</table>
 {% endblock %}
