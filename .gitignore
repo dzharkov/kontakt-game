@@ -35,3 +35,6 @@ nosetests.xml
 .pydevproject
 .idea
 app/conf.py
+
+static/*
+!static/robots.txt
