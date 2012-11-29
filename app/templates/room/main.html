@@ -10,16 +10,29 @@
                 document.body.appendChild(el);
             }
 
-            conn = io.connect('http://localhost:8001');
+            conn = io.connect('http://' + window.location.hostname +':8001');
+
+
+            conn.on('login_result', function(data) {
+                console.debug('login_result', data);
+            });
+
+            conn.on('joined_user', function(data) {
+                console.debug('joined_user', data);
+            });
+
+            conn.on('user_quit', function(data) {
+                console.debug('user_quit', data);
+            });
 
             conn.on('connect', function() {
                 show_message('connected');
+                conn.emit('login', '{{ request.session.session_key }}' , {{ room_id }});
             });
 
 
             conn.on('room_state_update', function(obj) {
-                console.debug(obj);
-                alert('room_update');
+                console.debug('room_state_update', obj);
             });
 
             conn.on('accepting_result', function(contact_id, result) {
