@@ -5,11 +5,21 @@ from app import settings
 class Game(object):
 
     def __init__(self):
+        self.room = None
         self.master = None
         self.guessed_word = None
         self.guessed_letters = None
 
-        self.contacts = None
+        self.state = None
+
+        self._active_contacts = dict()
+
+    def add_active_contact(self, contact):
+        self._active_contacts[contact.id] = contact
+
+    @property
+    def active_contacts(self):
+        return self._active_contacts.values()
 
     def letters_left(self):
         return len(self.guessed_word) - self.guessed_letters
@@ -26,7 +36,18 @@ class Game(object):
         return self.available_word_part() == word[:self.guessed_letters]
 
     def has_active_accepted_contacts(self):
-        return self.contacts.active_accepted().count() > 0
+        return self._active_contacts.active_accepted().count() > 0
+
+    @property
+    def json_representation(self):
+        return {
+            'id' : self.id,
+            'master_id' : self.master.id,
+            'available_word_part' : self.available_word_part(),
+            'word_length' : len(self.guessed_word),
+            'state' : self.state,
+            'contacts' : [contact.json_representation for contact in self._active_contacts.values()]
+        }
 
 class Contact(object):
 
@@ -66,3 +87,19 @@ class Contact(object):
         self.connected_at = timezone.now()
         self.connected_user = user
         self.connected_word = word
+
+    @property
+    def json_representation(self):
+        result = {
+            'id' : self.id,
+            'author_id' : self.author.id,
+            'desc' : self.description,
+        }
+
+        if self.connected_user:
+            result['connection'] = {
+                'user_id' : self.connected_user.id,
+                'seconds_left' : self.seconds_left()
+            }
+
+        return result
