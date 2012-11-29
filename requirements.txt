@@ -5,4 +5,5 @@ django-annoying==0.7.6
 South==0.7.6
 TornadIO2==0.0.4
 tornado==2.4.1
+tornado-redis==1.0.0
 
