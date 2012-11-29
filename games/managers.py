@@ -13,6 +13,8 @@ class ContactManager(object):
         cursor = connection.cursor()
         transaction.enter_transaction_management(True)
         cursor.execute("TRUNCATE games_contact")
+        cursor.execute("TRUNCATE games_game")
+        cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2)")
         cursor.execute(u"INSERT INTO `games_contact` VALUES (1,1,'2012-11-22 16:56:25',3,'мода','как сказала Коко Шанель, она выходит сама из себя',NULL,NULL,NULL),(2,1,'2012-11-22 17:09:04',4,'модуль','кусок чего-либо',NULL,NULL,NULL)")
         transaction.commit()
 
