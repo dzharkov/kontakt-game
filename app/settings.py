@@ -163,4 +163,7 @@ LOGGING = {
     }
 }
 
+REDIS_HOST = 'localhost'
+REDIS_DB = 1
+
 CONTACT_CHECKING_TIMEOUT = 10
