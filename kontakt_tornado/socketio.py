@@ -65,9 +65,9 @@ class GameCatcher(SocketConnection):
             self.emit('login_result', user_id)
             self.on_room_state_request()
 
-    @event('accept')
+    @event('contact_accept')
     @emit_game_errors
-    def on_accept(self, contact_id, word):
+    def on_contact_accept(self, contact_id, word):
         game_manager.accept_contact(self.user, self.game, int(contact_id), word)
 
     @event('contact_break')
