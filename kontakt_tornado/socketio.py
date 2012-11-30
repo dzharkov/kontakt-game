@@ -37,14 +37,16 @@ class GameCatcher(SocketConnection):
 
     @event('login')
     def on_login(self, session_id, room_id):
+        room_id = int(room_id)
         self.room_id = room_id
         redis.hget('room:' + str(room_id), session_id, callback=self.process_login)
 
     def process_login(self, user_id):
+        user_id = int(user_id)
         if not user_id:
-            self.emit('login_result', 0)
+            self.emit('login_result', -1)
         else:
-            self.user_id = user_id
+            self.user_id = int(user_id)
 
             user = user_manager.get_user_by_id(user_id)
             user.is_online = True
@@ -60,13 +62,13 @@ class GameCatcher(SocketConnection):
 
             notification_manager.add_user_connection(self)
 
-            self.emit('login_result', 1)
+            self.emit('login_result', user_id)
             self.on_room_state_request()
 
     @event('accept')
     @emit_game_errors
     def on_accept(self, contact_id, word):
-        game_manager.accept_contact(self.user, self.game, contact_id, word)
+        game_manager.accept_contact(self.user, self.game, int(contact_id), word)
 
     @event('room_state_request')
     def on_room_state_request(self):
