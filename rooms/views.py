@@ -9,6 +9,11 @@ from app import settings
 
 def clear_room(request):
     ContactManager.create_dummy_contacts_for_game()
+
+    redis_connection = redis.Redis(host=settings.REDIS_HOST, db=settings.REDIS_DB)
+
+    redis_connection.publish('reload', 'games')
+
     return HttpResponse("cleared");
 
 @render_to('room/main.html')

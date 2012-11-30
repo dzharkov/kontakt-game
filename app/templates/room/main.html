@@ -17,6 +17,10 @@
                 console.debug('login_result', data);
             });
 
+            conn.on('reload', function() {
+                window.location.reload();
+            });
+
             conn.on('joined_user', function(data) {
                 console.debug('joined_user', data);
             });

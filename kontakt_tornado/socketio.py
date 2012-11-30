@@ -2,6 +2,7 @@
 import functools
 import tornado.database
 import tornado.web
+import tornado.ioloop
 from tornadio2 import SocketConnection, TornadioRouter, SocketServer, event
 import tornadio2.gen
 
@@ -20,6 +21,8 @@ def emit_game_errors(fn):
             self.emit('game_error', e.message)
     return wrapper
 
+connections = dict()
+
 class GameCatcher(SocketConnection):
     def __init__(self, *args, **kwargs):
         super(GameCatcher, self).__init__(*args, **kwargs)
@@ -30,7 +33,7 @@ class GameCatcher(SocketConnection):
         self.game = None
 
     def listen(self):
-        pass
+        connections[self.__hash__()] = self
 
     @event('login')
     def on_login(self, session_id, room_id):
@@ -89,6 +92,9 @@ class GameCatcher(SocketConnection):
         notification_manager.emit_for_room(self.room_id, event, *args, **kwargs)
 
     def on_close(self):
+        if self.__hash__() in connections:
+            del connections[self.__hash__()]
+
         self.user.is_online = False
         self.room.remove_user(self.user)
         notification_manager.remove_user_connection(self)
@@ -103,9 +109,24 @@ class GameCatcher(SocketConnection):
         """
         return super(GameCatcher, self).on_event(name, *args, **kwargs)
 
+
+def reload_msg(msg):
+    if msg.kind == 'message':
+        if msg.body == 'games':
+            game_manager.load_active_games()
+        for connection in connections.values():
+            connection.emit('reload')
+
 def start_server():
     game_manager.load_active_games()
 
     router = TornadioRouter(GameCatcher)
     app = tornado.web.Application(router.urls, socket_io_port=8001)
+
+    from database import redis_subscriptions
+
+    tornado.ioloop.IOLoop.instance().add_callback(
+        lambda: redis_subscriptions.subscribe('reload', lambda x: redis_subscriptions.listen(reload_msg))
+    )
+
     SocketServer(app)
