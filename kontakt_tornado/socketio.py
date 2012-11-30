@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import functools
 import tornado.database
 import tornado.web
 from tornadio2 import SocketConnection, TornadioRouter, SocketServer, event
@@ -7,7 +8,17 @@ import tornadio2.gen
 from database import redis
 from managers import user_manager, notification_manager
 from games.managers import game_manager
+from games.exceptions import GameError
 from rooms.managers import room_manager
+
+def emit_game_errors(fn):
+    @functools.wraps(fn)
+    def wrapper(self, *args, **kwargs):
+        try:
+            return fn(self, *args, **kwargs)
+        except GameError as e:
+            self.emit('game_error', e.message)
+    return wrapper
 
 class GameCatcher(SocketConnection):
     def __init__(self, *args, **kwargs):
@@ -50,9 +61,9 @@ class GameCatcher(SocketConnection):
             self.on_room_state_request()
 
     @event('accept')
+    @emit_game_errors
     def on_accept(self, contact_id, word):
-        print word
-        self.emit('accepting_result', contact_id, 1)
+        game_manager.accept_contact(self.user, self.game, contact_id, word)
 
     @event('room_state_request')
     def on_room_state_request(self):

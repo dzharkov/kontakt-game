@@ -25,6 +25,13 @@
                 console.debug('user_quit', data);
             });
 
+            conn.on('game_error', function(data) {
+                console.debug('game_error', data);
+            });
+            conn.on('accepted_contact', function(data) {
+                console.debug('accepted_contact', data);
+            });
+
             conn.on('connect', function() {
                 show_message('connected');
                 conn.emit('login', '{{ request.session.session_key }}' , {{ room_id }});
@@ -48,7 +55,7 @@
 <h3>Контакты</h3>
     <a href="#" onclick="open_websocket();return false;">open</a><br/>
     <a href="#" onclick="conn.emit('room_state_request');return false;">Update</a><br/>
-    <a href="#" onclick="conn.emit('accept', 13, 'word');return false;">accept</a><br/>
+    <a href="#" onclick="conn.emit('accept', 1, 'мод');return false;">accept</a><br/>
     <iframe id="_hidden" style="display:none"></iframe>
     <h2>Messages</h2>
     <hr/>
