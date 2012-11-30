@@ -104,7 +104,7 @@ class GameManager(object):
 
         columns = ('master_id', 'guessed_word', 'guessed_letters', 'valid_until', 'is_active')
 
-        self.persist_entity(game, GAME_TABLE_NAME, columns)
+        #self.persist_entity(game, GAME_TABLE_NAME, columns)
 
     def persist_contact(self, contact):
         if contact.is_accepted:
@@ -113,6 +113,37 @@ class GameManager(object):
         columns = ('connected_user_id', 'connected_word', 'connected_at', 'valid_until', 'is_active', 'is_successful')
 
         self.persist_entity(contact, CONTACT_TABLE_NAME, columns)
+
+    def check_accepted_contact(self, contact):
+        contact = self.active_contacts[int(contact)]
+        if not contact.is_accepted:
+            raise Exception(u'trying to check unaccepted contact')
+        if not contact.is_active:
+            raise Exception(u'contact shouldn\'t be inactive')
+        if contact.check_at > timezone.now():
+            raise Exception(u'it\'s too early')
+
+        game = contact.game
+
+        if contact.is_connected_word_right():
+            contact.is_successful = True
+            for c in game.active_contacts:
+                self.remove_contact(c)
+            game.remove_active_contacts()
+            notification_manager.emit_for_room(game.room_id, 'successful_contact_connection', contact_id=contact.id, word=contact.word)
+            if contact.game_word_guessed() or game.guessed_letters+1 == game:
+                game.end()
+                notification_manager.emit_for_room(game.room_id, 'game_complete', word=game.guessed_word, is_word_guessed=contact.game_word_guessed())
+            else:
+                game.show_next_letter()
+                notification_manager.emit_for_room(game.room_id, 'next_letter_opened', letter=game.last_visible_letter)
+            self.persist_game(game)
+        else:
+            contact.is_active = False
+            notification_manager.emit_for_room(game.room_id, 'unsuccessful_contact_connection', contact.id)
+            self.remove_contact(contact)
+
+        self.persist_contact(contact)
 
     def accept_contact(self, user, game, contact_id, word):
         if game.has_active_accepted_contact:
@@ -139,6 +170,11 @@ class GameManager(object):
 
         notification_manager.emit_for_room(game.room_id, 'accepted_contact', contact_id=contact_id, user_id=user.id, seconds_left=contact.seconds_left)
 
+    def remove_contact(self, contact):
+        del self.active_contacts[contact.id]
+        contact.is_active = False
+        self.persist_contact(contact)
+
     def break_contact(self, user, game, contact_id, word):
         contact = self.find_active_contact(contact_id, game)
         if user != game.master:
@@ -149,7 +185,7 @@ class GameManager(object):
         if contact.is_right_word(word):
             contact.get_broken()
             self.persist_contact(contact)
-            del self.active_contacts[contact.id]
+            self.remove_contact(contact)
             notification_manager.emit_for_room(game.room_id, 'broken_contact', contact_id=contact_id, user_id=user.id)
         else:
             notification_manager.emit_for_user_in_room(user.id, game.room_id, 'unsuccessful_contact_breaking', contact_id)

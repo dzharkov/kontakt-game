@@ -23,6 +23,12 @@ class Game(object):
     def add_active_contact(self, contact):
         self._active_contacts[contact.id] = contact
 
+    def remove_active_contact(self, contact):
+        del self._active_contacts[contact.id]
+
+    def remove_active_contacts(self):
+        self._active_contacts = dict()
+
     @property
     def active_contacts(self):
         return self._active_contacts.values()
@@ -51,6 +57,18 @@ class Game(object):
     @property
     def has_active_accepted_contact(self):
         return self.last_accepted_contact and self.last_accepted_contact.is_active
+
+    def end(self):
+        self.guessed_letters = len(self.guessed_word)
+        self.remove_active_contacts()
+        self.is_active = False
+
+    def show_next_letter(self):
+        self.guessed_letters+=1
+
+    @property
+    def last_visible_letter(self):
+        return self.guessed_word[self.guessed_letters-1]
 
     @property
     def json_representation(self):
@@ -107,8 +125,15 @@ class Contact(object):
     def is_right_word(self, word):
         return self.word.lower() == word.lower()
 
+    def game_word_guessed(self):
+        return self.is_right_word(self.game.guessed_word)
+
     def get_broken(self):
         self.is_active = False
+
+    @property
+    def check_at(self):
+        return self.connected_at + timedelta(seconds=settings.CONTACT_CHECKING_TIMEOUT)
 
     def accept(self, user, word):
         nowtime = timezone.now()
@@ -116,11 +141,10 @@ class Contact(object):
         self.connected_user = user
         self.connected_word = word
 
-        valid_until = nowtime + timedelta(seconds=settings.CONTACT_CHECKING_TIMEOUT)
-        self.valid_until = valid_until
-        self.game.valid_until = valid_until
         self.game.last_accepted_contact = self
 
+    def is_connected_word_right(self):
+        return self.is_accepted and self.is_right_word(self.connected_word)
 
     @property
     def json_representation(self):

@@ -75,6 +75,11 @@ class GameCatcher(SocketConnection):
     def on_contact_break(self, contact_id, word):
         game_manager.break_contact(self.user, self.game, int(contact_id), word)
 
+    @event('contact_check')
+    @emit_game_errors
+    def on_contact_check(self, contact_id):
+        game_manager.check_accepted_contact(int(contact_id))
+
     @event('room_state_request')
     def on_room_state_request(self):
         result = dict()
