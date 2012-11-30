@@ -104,6 +104,12 @@ class Contact(object):
     def can_be_connected_word(self, word):
         return self.game.can_be_contact_word(word)
 
+    def is_right_word(self, word):
+        return self.word.lower() == word.lower()
+
+    def get_broken(self):
+        self.is_active = False
+
     def accept(self, user, word):
         nowtime = timezone.now()
         self.connected_at =  nowtime

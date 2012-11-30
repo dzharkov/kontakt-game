@@ -139,4 +139,19 @@ class GameManager(object):
 
         notification_manager.emit_for_room(game.room_id, 'accepted_contact', contact_id=contact_id, user_id=user.id, seconds_left=contact.seconds_left)
 
+    def break_contact(self, user, game, contact_id, word):
+        contact = self.find_active_contact(contact_id, game)
+        if user != game.master:
+            raise GameError(u'Только ведущий может обрывать контакт')
+        if not contact.is_active:
+            raise GameError(u'Контакт уже не активен')
+
+        if contact.is_right_word(word):
+            contact.get_broken()
+            self.persist_contact(contact)
+            del self.active_contacts[contact.id]
+            notification_manager.emit_for_room(game.room_id, 'broken_contact', contact_id=contact_id, user_id=user.id)
+        else:
+            notification_manager.emit_for_user_in_room(user.id, game.room_id, 'unsuccessful_contact_breaking', contact_id)
+
 game_manager = GameManager()
