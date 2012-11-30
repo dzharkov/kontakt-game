@@ -33,6 +33,8 @@ class ContactManager(object):
 
 from kontakt_tornado.database import db
 from kontakt_tornado.managers import notification_manager, user_manager
+import heapq
+import tornado.ioloop
 
 GAME_TABLE_NAME = 'games_game'
 CONTACT_TABLE_NAME = 'games_contact'
@@ -42,12 +44,16 @@ class GameManager(object):
     def __init__(self):
         self.active_games = dict()
         self.active_contacts = dict()
+        self.timeout_callbacks = []
 
     def load_active_games(self):
         self.active_games = dict()
         self.active_contacts = dict()
+        self.timeout_callbacks = []
         for row in db.query("SELECT * FROM %s" % GAME_TABLE_NAME):
             self.add_game_from_db_row(row)
+
+        self.check_callbacks()
 
     def add_game_from_db_row(self, row):
         game = Game()
@@ -63,10 +69,28 @@ class GameManager(object):
             if contact.is_accepted and (not game.last_accepted_contact or game.last_accepted_contact.connected_at <= contact.connected_at):
                 game.last_accepted_contact = contact
 
+            if contact.is_accepted:
+                self.create_contact_check_task(contact)
+
         game.room_id = 1
 
         self.active_games[game.id] = game
         return game
+
+    def check_callbacks(self):
+        now = timezone.now()
+        while self.timeout_callbacks and self.timeout_callbacks[0][0] < now:
+            timeout = heapq.heappop(self.timeout_callbacks)
+            timeout[1]()
+
+    def add_timeout_callback(self, start_at, callback):
+        now = timezone.now()
+        delta = max(start_at, now) - now
+        tornado.ioloop.IOLoop.instance().add_timeout(delta, callback)
+        heapq.heappush(self.timeout_callbacks, (start_at, callback))
+
+    def create_contact_check_task(self, contact):
+        self.add_timeout_callback(contact.check_at, lambda: self.check_accepted_contact(contact))
 
     def add_contact_from_db_row(self, row):
         contact = Contact()
@@ -104,7 +128,7 @@ class GameManager(object):
 
         columns = ('master_id', 'guessed_word', 'guessed_letters', 'valid_until', 'is_active')
 
-        #self.persist_entity(game, GAME_TABLE_NAME, columns)
+        self.persist_entity(game, GAME_TABLE_NAME, columns)
 
     def persist_contact(self, contact):
         if contact.is_accepted:
@@ -115,7 +139,6 @@ class GameManager(object):
         self.persist_entity(contact, CONTACT_TABLE_NAME, columns)
 
     def check_accepted_contact(self, contact):
-        contact = self.active_contacts[int(contact)]
         if not contact.is_accepted:
             raise Exception(u'trying to check unaccepted contact')
         if not contact.is_active:
@@ -146,6 +169,7 @@ class GameManager(object):
         self.persist_contact(contact)
 
     def accept_contact(self, user, game, contact_id, word):
+        self.check_callbacks()
         if game.has_active_accepted_contact:
             raise GameError(u'В игре уже есть принятый контакт')
 
@@ -168,6 +192,8 @@ class GameManager(object):
         self.persist_contact(contact)
         self.persist_game(game)
 
+        self.create_contact_check_task(contact)
+
         notification_manager.emit_for_room(game.room_id, 'accepted_contact', contact_id=contact_id, user_id=user.id, seconds_left=contact.seconds_left)
 
     def remove_contact(self, contact):
@@ -176,6 +202,7 @@ class GameManager(object):
         self.persist_contact(contact)
 
     def break_contact(self, user, game, contact_id, word):
+        self.check_callbacks()
         contact = self.find_active_contact(contact_id, game)
         if user != game.master:
             raise GameError(u'Только ведущий может обрывать контакт')
