@@ -2,6 +2,7 @@
 from datetime import timedelta
 from django.utils import timezone
 from models import *
+from exceptions import GameError
 
 from app import settings
 
@@ -12,12 +13,16 @@ class ContactManager(object):
 
         cursor = connection.cursor()
         transaction.enter_transaction_management(True)
-        cursor.execute("SET foreign_key_checks = 0")
-        cursor.execute("TRUNCATE games_contact")
-        cursor.execute("TRUNCATE games_game")
-        cursor.execute("SET foreign_key_checks = 1")
-        cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2)")
-        cursor.execute(u"INSERT INTO `games_contact` VALUES (1,1,'2012-11-22 16:56:25',3,'мода','как сказала Коко Шанель, она выходит сама из себя',NULL,NULL,NULL),(2,1,'2012-11-22 17:09:04',4,'модуль','кусок чего-либо',NULL,NULL,NULL)")
+        try:
+            cursor.execute("SET foreign_key_checks = 0")
+            cursor.execute("TRUNCATE games_contact")
+            cursor.execute("TRUNCATE games_game")
+            cursor.execute("SET foreign_key_checks = 1")
+            cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2,NULL,1)")
+            cursor.execute(u"INSERT INTO `games_contact` VALUES (1,1,'2012-11-22 16:56:25',3,'мода','как сказала Коко Шанель, она выходит сама из себя',NULL,NULL,NULL,NULL,1,0),(2,1,'2012-11-22 17:09:04',4,'модуль','кусок чего-либо',NULL,NULL,NULL,NULL,1,0)")
+        except Exception:
+            transaction.rollback()
+            return
         transaction.commit()
 
     @staticmethod
@@ -49,10 +54,14 @@ class GameManager(object):
 
         game.master = user_manager.get_user_by_id(game.master_id)
 
-        for contact_row in db.query("SELECT * FROM " + CONTACT_TABLE_NAME + " WHERE game_id = %s", game.id):
+        for contact_row in db.query("SELECT * FROM " + CONTACT_TABLE_NAME + " WHERE game_id = %s AND is_active=1", game.id):
             contact = self.add_contact_from_db_row(contact_row)
             game.add_active_contact(contact)
             contact.game = game
+            if contact.is_accepted and (not game.last_accepted_contact or game.last_accepted_contact.connected_at <= contact.connected_at):
+                game.last_accepted_contact = contact
+
+        game.room_id = 1
 
         self.active_games[game.id] = game
         return game
@@ -72,5 +81,61 @@ class GameManager(object):
 
     def get_game_in_room(self, room_id):
         return self.active_games.values()[0]
+
+    def find_active_contact(self, id, game):
+        try:
+            result = self.active_contacts[id]
+        except KeyError:
+            raise GameError(u'Контакт не найден')
+
+        if result.game != game:
+            raise GameError(u'Контакт не принадлежит игре')
+        return result
+
+    def persist_entity(self, obj, table_name, columns):
+        args_values=map(lambda x: obj.__getattribute__(x), columns)
+        args_values.append(obj.id)
+        print ( ", ".join( map(lambda x: x + '=%s', columns) ) ), args_values
+        db.execute("UPDATE " + table_name + " SET " + ( ", ".join( map(lambda x: x + '=%s', columns) ) ) +" WHERE id = %s", *args_values)
+
+    def persist_game(self, game):
+        game.master_id = game.master.id
+
+        columns = ('master_id', 'guessed_word', 'guessed_letters', 'valid_until', 'is_active')
+
+        self.persist_entity(game, GAME_TABLE_NAME, columns)
+
+    def persist_contact(self, contact):
+        if contact.is_accepted:
+            contact.connected_user_id = contact.connected_user.id
+
+        columns = ('connected_user_id', 'connected_word', 'connected_at', 'valid_until', 'is_active', 'is_successful')
+
+        self.persist_entity(contact, CONTACT_TABLE_NAME, columns)
+
+    def accept_contact(self, user, game, contact_id, word):
+        if game.has_active_accepted_contact:
+            raise GameError(u'В игре уже есть принятый контакт')
+
+        contact = self.find_active_contact(contact_id, game)
+
+        if user == game.master:
+            raise GameError(u'Ведущий не должен принимать контакт')
+        if user == contact.author:
+            raise GameError(u'Автор контакта не может его принимать')
+        if contact.is_accepted:
+            raise GameError(u'Контакт уже принят')
+        if contact.is_canceled:
+            raise GameError(u'Контакт был отменен')
+
+        if not contact.can_be_connected_word(word):
+            raise GameError(u'Вы выбрали явно неподходящее слово')
+
+        contact.accept(user, word)
+
+        self.persist_contact(contact)
+        self.persist_game(game)
+
+        notification_manager.emit_for_room(game.room_id, 'accepted_contact', contact_id=contact_id, user_id=user.id, seconds_left=contact.seconds_left)
 
 game_manager = GameManager()
