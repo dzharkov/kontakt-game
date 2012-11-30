@@ -44,6 +44,8 @@ class GameManager(object):
         self.active_contacts = dict()
 
     def load_active_games(self):
+        self.active_games = dict()
+        self.active_contacts = dict()
         for row in db.query("SELECT * FROM %s" % GAME_TABLE_NAME):
             self.add_game_from_db_row(row)
 
