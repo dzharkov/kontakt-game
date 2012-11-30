@@ -82,8 +82,6 @@ class GameCatcher(SocketConnection):
 
         all_users.add(self.game.master)
 
-        print all_users,user_manager._users
-
         result['users'] = [user.json_representation for user in all_users]
 
         self.emit('room_state_update', result)

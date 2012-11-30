@@ -97,7 +97,6 @@ class GameManager(object):
     def persist_entity(self, obj, table_name, columns):
         args_values=map(lambda x: obj.__getattribute__(x), columns)
         args_values.append(obj.id)
-        print ( ", ".join( map(lambda x: x + '=%s', columns) ) ), args_values
         db.execute("UPDATE " + table_name + " SET " + ( ", ".join( map(lambda x: x + '=%s', columns) ) ) +" WHERE id = %s", *args_values)
 
     def persist_game(self, game):
