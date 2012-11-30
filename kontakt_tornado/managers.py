@@ -16,9 +16,9 @@ class NotificationManager(object):
     def remove_user_connection(self, connection):
         del self._rooms_connections[connection.room_id][connection.user_id]
 
-    def emit_for_user_in_room(self, user_id, room_id, event, *args, **kwargs):
-        if room_id in self._rooms_connections and user_id in self._rooms_connections[room_id]:
-            self._rooms_connections[room_id][user_id].emit(event, *args, **kwargs)
+    def emit_for_user_in_room(self, _user_id, room_id, event, *args, **kwargs):
+        if room_id in self._rooms_connections and _user_id in self._rooms_connections[room_id]:
+            self._rooms_connections[room_id][_user_id].emit(event, *args, **kwargs)
 
     def emit_for_room(self, room_id, event, *args, **kwargs):
         if not room_id in self._rooms_connections:
