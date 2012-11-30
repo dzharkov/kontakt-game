@@ -1,4 +1,5 @@
 from django.utils import timezone
+from datetime import timedelta
 
 from app import settings
 
@@ -13,6 +14,11 @@ class Game(object):
         self.state = None
 
         self._active_contacts = dict()
+
+        self.valid_until = None
+        self.last_successful_contact = None
+        self.last_accepted_contact = None
+        self.is_active = True
 
     def add_active_contact(self, contact):
         self._active_contacts[contact.id] = contact
@@ -37,6 +43,14 @@ class Game(object):
 
     def has_active_accepted_contacts(self):
         return self._active_contacts.active_accepted().count() > 0
+
+    @property
+    def is_valid(self):
+        return not self.valid_until or self.valid_until > timezone.now()
+
+    @property
+    def has_active_accepted_contact(self):
+        return self.last_accepted_contact and self.last_accepted_contact.is_active
 
     @property
     def json_representation(self):
@@ -64,19 +78,26 @@ class Contact(object):
         self.connected_user = None
         self.connected_word = None
         self.connected_at = None
+        self.valid_until = None
 
+        self.is_active = True
+        self.is_successful = False
+
+    @property
     def is_canceled(self):
         return False
 
+    @property
     def is_accepted(self):
         return self.connected_at != None
 
-    def is_active(self):
-        return not self.is_accepted() or self.seconds_left() > 0
+    def check_is_active(self):
+        return not self.is_accepted or self.seconds_left() > 0
 
     def accepted_seconds_ago(self):
         return (timezone.now()-self.connected_at.replace(tzinfo=None)).seconds
 
+    @property
     def seconds_left(self):
         return max(0, settings.CONTACT_CHECKING_TIMEOUT  - self.accepted_seconds_ago())
 
@@ -84,9 +105,16 @@ class Contact(object):
         return self.game.can_be_contact_word(word)
 
     def accept(self, user, word):
-        self.connected_at = timezone.now()
+        nowtime = timezone.now()
+        self.connected_at =  nowtime
         self.connected_user = user
         self.connected_word = word
+
+        valid_until = nowtime + timedelta(seconds=settings.CONTACT_CHECKING_TIMEOUT)
+        self.valid_until = valid_until
+        self.game.valid_until = valid_until
+        self.game.last_accepted_contact = self
+
 
     @property
     def json_representation(self):
@@ -99,7 +127,7 @@ class Contact(object):
         if self.connected_user:
             result['connection'] = {
                 'user_id' : self.connected_user.id,
-                'seconds_left' : self.seconds_left()
+                'seconds_left' : self.seconds_left
             }
 
         return result
