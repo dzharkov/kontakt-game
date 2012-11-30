@@ -8,7 +8,10 @@ class Room(object):
         self._users[user.id] = user
 
     def remove_user(self, user):
-        del self._users[user.id]
+        try:
+            del self._users[user.id]
+        except KeyError:
+            pass
 
     @property
     def users(self):
