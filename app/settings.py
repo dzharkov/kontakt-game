@@ -84,7 +84,7 @@ SECRET_KEY = 'b2+61d8@(*bp$b#v-(9t--1@q_jx7$x!gli*6_4vartkph#2k9'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (

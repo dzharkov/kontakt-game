@@ -9,8 +9,8 @@
   <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.min.css">
   <link rel="stylesheet" href="/static/css/app.css">
-
-    <script src="/static/socket.io.js"></script>
+  {% block styles %}
+  {% endblock styles %}
 
 </head>
 
@@ -50,5 +50,8 @@
   {% endblock body  %}
   
 <div class="span12 footer"></div>
+
+  {% block scripts %}
+  {% endblock scripts %}
 </body>
 </html>
