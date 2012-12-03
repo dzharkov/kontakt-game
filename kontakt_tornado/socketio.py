@@ -42,7 +42,6 @@ class GameCatcher(SocketConnection):
         redis.hget('room:' + str(room_id), session_id, callback=self.process_login)
 
     def process_login(self, user_id):
-        user_id = int(user_id)
         if not user_id:
             self.emit('login_result', -1)
         else:
