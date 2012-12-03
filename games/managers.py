@@ -165,7 +165,7 @@ class GameManager(object):
             self.persist_game(game)
         else:
             contact.is_active = False
-            notification_manager.emit_for_room(game.room_id, 'unsuccessful_contact_connection', contact.id)
+            notification_manager.emit_for_room(game.room_id, 'unsuccessful_contact_connection', { 'contact_id' : contact.id })
             self.remove_contact(contact)
 
         self.persist_contact(contact)
@@ -217,6 +217,6 @@ class GameManager(object):
             self.remove_contact(contact)
             notification_manager.emit_for_room(game.room_id, 'broken_contact', contact_id=contact_id, user_id=user.id)
         else:
-            notification_manager.emit_for_user_in_room(user.id, game.room_id, 'unsuccessful_contact_breaking', contact_id)
+            notification_manager.emit_for_user_in_room(user.id, game.room_id, 'unsuccessful_contact_breaking', { 'contact_id' : contact_id })
 
 game_manager = GameManager()

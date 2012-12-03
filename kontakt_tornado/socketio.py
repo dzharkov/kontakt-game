@@ -43,7 +43,7 @@ class GameCatcher(SocketConnection):
 
     def process_login(self, user_id):
         if not user_id:
-            self.emit('login_result', -1)
+            self.emit('login_result', { 'result' : 0 })
         else:
             self.user_id = int(user_id)
 
@@ -61,7 +61,7 @@ class GameCatcher(SocketConnection):
 
             notification_manager.add_user_connection(self)
 
-            self.emit('login_result', user_id)
+            self.emit('login_result', { 'result' : 1, 'user_id' : user_id })
             self.on_room_state_request()
 
     @event('contact_accept')
@@ -102,7 +102,7 @@ class GameCatcher(SocketConnection):
         self.user.is_online = False
         self.room.remove_user(self.user)
         notification_manager.remove_user_connection(self)
-        self.emit_for_room('user_quit', self.user_id)
+        self.emit_for_room('user_quit', { 'user_id' : self.user_id })
 
     @tornadio2.gen.sync_engine
     def on_event(self, name, *args, **kwargs):
