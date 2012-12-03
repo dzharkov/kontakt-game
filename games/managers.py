@@ -33,6 +33,7 @@ class ContactManager(object):
 
 from kontakt_tornado.database import db
 from kontakt_tornado.managers import notification_manager, user_manager
+from utils import exec_once
 import heapq
 import tornado.ioloop
 
@@ -84,10 +85,11 @@ class GameManager(object):
             timeout[1]()
 
     def add_timeout_callback(self, start_at, callback):
+        once_exec_callback = exec_once(callback)
         now = timezone.now()
         delta = max(start_at, now) - now
-        tornado.ioloop.IOLoop.instance().add_timeout(delta, callback)
-        heapq.heappush(self.timeout_callbacks, (start_at, callback))
+        tornado.ioloop.IOLoop.instance().add_timeout(delta, once_exec_callback)
+        heapq.heappush(self.timeout_callbacks, (start_at, once_exec_callback))
 
     def create_contact_check_task(self, contact):
         self.add_timeout_callback(contact.check_at, lambda: self.check_accepted_contact(contact))
