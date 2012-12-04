@@ -18,8 +18,8 @@ class ContactManager(object):
             cursor.execute("TRUNCATE games_contact")
             cursor.execute("TRUNCATE games_game")
             cursor.execute("SET foreign_key_checks = 1")
-            cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2,NULL,1)")
-            cursor.execute(u"INSERT INTO `games_contact` VALUES (1,1,'2012-11-22 16:56:25',3,'мода','как сказала Коко Шанель, она выходит сама из себя',NULL,NULL,NULL,NULL,1,0),(2,1,'2012-11-22 17:09:04',4,'моделирование','Оно бывает имитационным, эволюционным, и изредка даже психологическим',NULL,NULL,NULL,NULL,1,0)")
+            cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2,1)")
+            cursor.execute(u"INSERT INTO `games_contact` VALUES (1,1,'2012-11-22 16:56:25',3,'мода','как сказала Коко Шанель, она выходит сама из себя',NULL,NULL,NULL,1,0),(2,1,'2012-11-22 17:09:04',4,'моделирование','Оно бывает имитационным, эволюционным, и изредка даже психологическим',NULL,NULL,NULL,1,0)")
         except Exception:
             transaction.rollback()
             return
@@ -128,7 +128,7 @@ class GameManager(object):
     def persist_game(self, game):
         game.master_id = game.master.id
 
-        columns = ('master_id', 'guessed_word', 'guessed_letters', 'valid_until', 'is_active')
+        columns = ('master_id', 'guessed_word', 'guessed_letters', 'is_active')
 
         self.persist_entity(game, GAME_TABLE_NAME, columns)
 
@@ -136,7 +136,7 @@ class GameManager(object):
         if contact.is_accepted:
             contact.connected_user_id = contact.connected_user.id
 
-        columns = ('connected_user_id', 'connected_word', 'connected_at', 'valid_until', 'is_active', 'is_successful')
+        columns = ('connected_user_id', 'connected_word', 'connected_at', 'is_active', 'is_successful')
 
         self.persist_entity(contact, CONTACT_TABLE_NAME, columns)
 

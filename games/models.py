@@ -13,7 +13,6 @@ class Game(object):
 
         self._active_contacts = dict()
 
-        self.valid_until = None
         self.last_successful_contact = None
         self.last_accepted_contact = None
         self.is_active = True
@@ -47,10 +46,6 @@ class Game(object):
 
     def has_active_accepted_contacts(self):
         return self._active_contacts.active_accepted().count() > 0
-
-    @property
-    def is_valid(self):
-        return not self.valid_until or self.valid_until > timezone.now()
 
     @property
     def state(self):
@@ -98,7 +93,6 @@ class Contact(object):
         self.connected_user = None
         self.connected_word = None
         self.connected_at = None
-        self.valid_until = None
 
         self.is_active = True
         self.is_successful = False
