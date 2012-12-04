@@ -99,10 +99,11 @@ class GameCatcher(SocketConnection):
         if self.__hash__() in connections:
             del connections[self.__hash__()]
 
-        self.user.is_online = False
-        self.room.remove_user(self.user)
-        notification_manager.remove_user_connection(self)
-        self.emit_for_room('user_quit', { 'user_id' : self.user_id })
+        if self.user:
+            self.user.is_online = False
+            self.room.remove_user(self.user)
+            notification_manager.remove_user_connection(self)
+            self.emit_for_room('user_quit', { 'user_id' : self.user_id })
 
     @tornadio2.gen.sync_engine
     def on_event(self, name, *args, **kwargs):
