@@ -32,7 +32,7 @@ class ContactManager(object):
 
 
 from kontakt_tornado.database import db
-from kontakt_tornado.managers import notification_manager, user_manager
+from kontakt_tornado.managers import connection_manager, user_manager
 from utils import exec_once
 import heapq
 import tornado.ioloop
@@ -155,17 +155,17 @@ class GameManager(object):
             for c in game.active_contacts:
                 self.remove_contact(c)
             game.remove_active_contacts()
-            notification_manager.emit_for_room(game.room_id, 'successful_contact_connection', contact_id=contact.id, word=contact.word)
+            connection_manager.emit_for_room(game.room_id, 'successful_contact_connection', contact_id=contact.id, word=contact.word)
             if contact.game_word_guessed() or game.guessed_letters+1 == game:
                 game.end()
-                notification_manager.emit_for_room(game.room_id, 'game_complete', word=game.guessed_word, is_word_guessed=contact.game_word_guessed())
+                connection_manager.emit_for_room(game.room_id, 'game_complete', word=game.guessed_word, is_word_guessed=contact.game_word_guessed())
             else:
                 game.show_next_letter()
-                notification_manager.emit_for_room(game.room_id, 'next_letter_opened', letter=game.last_visible_letter)
+                connection_manager.emit_for_room(game.room_id, 'next_letter_opened', letter=game.last_visible_letter)
             self.persist_game(game)
         else:
             contact.is_active = False
-            notification_manager.emit_for_room(game.room_id, 'unsuccessful_contact_connection', { 'contact_id' : contact.id })
+            connection_manager.emit_for_room(game.room_id, 'unsuccessful_contact_connection', { 'contact_id' : contact.id })
             self.remove_contact(contact)
 
         self.persist_contact(contact)
@@ -196,7 +196,7 @@ class GameManager(object):
 
         self.create_contact_check_task(contact)
 
-        notification_manager.emit_for_room(game.room_id, 'accepted_contact', contact_id=contact_id, user_id=user.id, seconds_left=contact.seconds_left)
+        connection_manager.emit_for_room(game.room_id, 'accepted_contact', contact_id=contact_id, user_id=user.id, seconds_left=contact.seconds_left)
 
     def remove_contact(self, contact):
         del self.active_contacts[contact.id]
@@ -215,8 +215,8 @@ class GameManager(object):
             contact.get_broken()
             self.persist_contact(contact)
             self.remove_contact(contact)
-            notification_manager.emit_for_room(game.room_id, 'broken_contact', contact_id=contact_id, user_id=user.id)
+            connection_manager.emit_for_room(game.room_id, 'broken_contact', contact_id=contact_id, user_id=user.id)
         else:
-            notification_manager.emit_for_user_in_room(user.id, game.room_id, 'unsuccessful_contact_breaking', { 'contact_id' : contact_id })
+            connection_manager.emit_for_user_in_room(user.id, game.room_id, 'unsuccessful_contact_breaking', { 'contact_id' : contact_id })
 
 game_manager = GameManager()

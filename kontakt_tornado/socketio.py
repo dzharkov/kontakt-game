@@ -7,10 +7,9 @@ from tornadio2 import SocketConnection, TornadioRouter, SocketServer, event
 import tornadio2.gen
 
 from database import redis
-from managers import user_manager, notification_manager
+from managers import user_manager, connection_manager
 from games.managers import game_manager
 from games.exceptions import GameError
-from rooms.managers import room_manager
 
 def emit_game_errors(fn):
     @functools.wraps(fn)
@@ -20,8 +19,6 @@ def emit_game_errors(fn):
         except GameError as e:
             self.emit('game_error', e.message)
     return wrapper
-
-connections = dict()
 
 class GameCatcher(SocketConnection):
     def __init__(self, *args, **kwargs):
@@ -33,7 +30,7 @@ class GameCatcher(SocketConnection):
         self.game = None
 
     def listen(self):
-        connections[self.__hash__()] = self
+        connection_manager.add_connection(self)
 
     @event('login')
     def on_login(self, session_id, room_id):
@@ -48,18 +45,14 @@ class GameCatcher(SocketConnection):
             self.user_id = int(user_id)
 
             user = user_manager.get_user_by_id(user_id)
-            user.is_online = True
 
             self.user = user
 
-            self.room = room_manager.get_room_by_id(self.room_id)
-            self.room.add_user(user)
+            connection_manager.add_user_room_connection(self)
 
             self.game = game_manager.get_game_in_room(self.room_id)
 
             self.emit_for_room('joined_user', user.json_representation)
-
-            notification_manager.add_user_connection(self)
 
             self.emit('login_result', { 'result' : 1, 'user_id' : user_id })
             self.on_room_state_request()
@@ -78,8 +71,7 @@ class GameCatcher(SocketConnection):
     def on_room_state_request(self):
         result = dict()
         result['game'] = self.game.json_representation
-
-        all_users = set(self.room.users)
+        all_users = set(connection_manager.online_users_in_room(self.room_id))
 
         for contact in self.game.active_contacts:
             all_users.add(contact.author)
@@ -93,16 +85,12 @@ class GameCatcher(SocketConnection):
         self.emit('room_state_update', result)
 
     def emit_for_room(self, event, *args, **kwargs):
-        notification_manager.emit_for_room(self.room_id, event, *args, **kwargs)
+        connection_manager.emit_for_room(self.room_id, event, *args, **kwargs)
 
     def on_close(self):
-        if self.__hash__() in connections:
-            del connections[self.__hash__()]
+        connection_manager.remove_connection(self)
 
         if self.user:
-            self.user.is_online = False
-            self.room.remove_user(self.user)
-            notification_manager.remove_user_connection(self)
             self.emit_for_room('user_quit', { 'user_id' : self.user_id })
 
     @tornadio2.gen.sync_engine
