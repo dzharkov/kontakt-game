@@ -11,8 +11,6 @@ class Game(object):
         self.guessed_word = None
         self.guessed_letters = None
 
-        self.state = None
-
         self._active_contacts = dict()
 
         self.valid_until = None
@@ -53,6 +51,10 @@ class Game(object):
     @property
     def is_valid(self):
         return not self.valid_until or self.valid_until > timezone.now()
+
+    @property
+    def state(self):
+        return 'running' if self.guessed_letters < len(self.guessed_word) else 'complete'
 
     @property
     def has_active_accepted_contact(self):
