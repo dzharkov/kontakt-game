@@ -52,10 +52,10 @@ class GameCatcher(SocketConnection):
 
             self.game = game_manager.get_game_in_room(self.room_id)
 
-            self.emit_for_room('joined_user', user.json_representation)
-
             self.emit('login_result', { 'result' : 1, 'user_id' : user_id })
             self.on_room_state_request()
+
+            self.emit_for_room('joined_user', user.json_representation)
 
     @event('contact_accept')
     @emit_game_errors
