@@ -41,8 +41,8 @@
                         </h2>
                         <div class="input-prepend input-append" ng-show="currentUser.isMaster">
                             <span class="add-on">{{availableWordPart}}</span>
-                            <input class="span2" id="prependedInput" type="text">
-                            <button class="btn btn-danger" type="button">
+                            <input class="span2"type="text" ng-model="breakGuess"/>
+                            <button class="btn btn-danger" type="button" ng-click="breakContact(breakGuess)">
                                 <i class="icon-remove icon-white"></i>  Разорвать контакт
                             </button>
                         </div>

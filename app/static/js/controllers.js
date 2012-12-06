@@ -15,6 +15,13 @@ function AppCtrl($scope, socket, $timeout) {
         return u1.nickname < u2.nickname;
     }
 
+    function deleteContact(contactId) {
+        var contactOwner = $scope.users.firstOrDefault($scope.currentUser, function(u){
+            return u.contact !== undefined && u.contact.id === contactId;
+        });
+        contactOwner.removeContact(contactId);
+    }
+
     $scope.createContact = function(){
 
     };
@@ -25,6 +32,12 @@ function AppCtrl($scope, socket, $timeout) {
             socket.emit('contact_accept', {'contact_id': contact.id, 'word' : fullGuess});
             contact.guess = '';
         }
+    };
+
+    $scope.breakContact = function(breakGuess){
+        var fullGuess = $scope.availableWordPart+breakGuess;
+        socket.emit('contact_break', {'contact_id': $scope.currentContactId, 'word' : fullGuess});
+        breakGuess = "";
     };
 
     function switchNormal(){
@@ -77,7 +90,8 @@ function AppCtrl($scope, socket, $timeout) {
             joinedUser.makeMaster();
         }
         joinedUser.isOnline = true;
-        alertify.success("Пользователь "+joinedUser.name+" присоединился к нам :)");
+        if(joinedUser.id !== $scope.currentUser.id)
+            alertify.log("Пользователь "+joinedUser.name+" присоединился к нам :)");
     });
 
     socket.on('user_quit', function(data) {
@@ -108,35 +122,42 @@ function AppCtrl($scope, socket, $timeout) {
             $scope.contactTo = $scope.users.findById(data.user_id);
         }
         $scope.secondsLeft = data.seconds_left;
+        $scope.currentContactId = data.contact_id;
         switchContacting();
         $timeout($scope.onTimeout, 1000);
     });
 
     socket.on('broken_contact', function(data) {
         console.debug('broken_contact', data);
+        deleteContact(data.contact_id);
+        alertify.log("Контакт был разорван ведущим.");
+        switchNormal();
     });
 
     socket.on('unsuccessful_contact_breaking', function(data) {
         console.debug('unsuccessful_contact_breaking', data);
+        alertify.log("Неуспешная попытка разорвать контакт.");
     });
 
     socket.on('successful_contact_connection', function(data) {
         console.debug('successful_contact_connection', data);
-        var contactOwner = $scope.users.firstOrDefault($scope.currentUser, function(u){
-            return u.contact !== undefined && u.contact.id === data.contact_id;
-        });
-        contactOwner.removeContact(data.contact_id);
+        deleteContact(data.contact_id);
+        alertify.log("Контакт успешно завершился (слово - "+data.word+")!");
     });
 
     socket.on('game_complete', function(data) {
         console.debug('game_complete', data);
+        var message = 'Игра успешно завершена! Было отгадано слово ' + data.word;
+        alertify.log( message, function () {
+            // after clicking OK
+        });
     });
 
     socket.on('next_letter_opened', function(data) {
         console.debug(data);
         var letter = data.letter;
         $scope.availableWordPart += letter;
-        alertify.success("Открыта новая буква: " + letter + "!");
+        alertify.log("Открыта новая буква: " + letter + "!");
         switchNormal();
     });
 
