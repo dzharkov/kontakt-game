@@ -1,6 +1,22 @@
-Array.prototype.firstOrUndefined = function(clause){
+Array.prototype.first = function(clause){
     for(var i = 0; i < this.length; i++){
         if(clause(this[i]) === true)
+            return this[i];
+    }
+    return undefined;
+};
+
+Array.prototype.firstOrDefault = function(def, clause){
+    for(var i = 0; i < this.length; i++){
+        if(clause(this[i]) === true)
+            return this[i];
+    }
+    return def;
+};
+
+Array.prototype.findById = function(id){
+    for(var i = 0; i < this.length; i++){
+        if(this[i].id === id)
             return this[i];
     }
     return undefined;
@@ -18,6 +34,13 @@ function User(userData, contactData){
     this.makeMaster = function(){
         this.isMaster = true;
         this.role = "Ведущий";
-    }
-};
+    };
+
+    this.removeContact = function(contactId){
+        if(this.contact !== undefined && this.contact.id === contactId){
+            delete this.contact;
+            this.hasContact = false;
+        }
+    };
+}
 

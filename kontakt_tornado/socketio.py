@@ -88,10 +88,9 @@ class GameCatcher(SocketConnection):
         connection_manager.emit_for_room(self.room_id, event, *args, **kwargs)
 
     def on_close(self):
-        connection_manager.remove_connection(self)
-
         if self.user:
             self.emit_for_room('user_quit', { 'user_id' : self.user_id })
+        connection_manager.remove_connection(self)
 
     @tornadio2.gen.sync_engine
     def on_event(self, name, *args, **kwargs):

@@ -1,5 +1,5 @@
-function AppCtrl($scope, socket) {
-    var CompareTwoUsers = function(u1, u2){
+function AppCtrl($scope, socket, $timeout) {
+    function CompareTwoUsers (u1, u2){
         if(u1.hasContact && !u2.hasContact){
             return -1;
         }
@@ -15,26 +15,63 @@ function AppCtrl($scope, socket) {
         return u1.nickname < u2.nickname;
     }
 
+    $scope.createContact = function(){
+
+    };
+
+    $scope.acceptContact = function(contact){
+        if(contact !== undefined){
+            var fullGuess = $scope.availableWordPart+contact.guess;
+            socket.emit('contact_accept', {'contact_id': contact.id, 'word' : fullGuess});
+            contact.guess = '';
+        }
+    };
+
+    function switchNormal(){
+        $scope.infoBarMode = "stats";
+        $scope.showUserControls = true;
+    }
+
+    function switchContacting(){
+        $scope.infoBarMode = "timer";
+        $scope.showUserControls = false;
+    }
+
+    switchNormal();
+
+    $scope.modes = {"contacting":"timer", "normal":"stats"};
+
+    $scope.onTimeout = function(){
+        $scope.secondsLeft--;
+        if ($scope.secondsLeft > 0) {
+            $timeout($scope.onTimeout,1000);
+        }
+    }
 
     // Socket listeners
 
-    socket.on('login_result', function(login_result) {
-        $scope.currentUserId = login_result;
+    socket.on('login_result', function(data) {
+        console.debug('login_result', data);
+        if(data.result === 1){
+            $scope.currentUserId = data.user_id;
+        }
     });
 
     socket.on('reload', function() {
         window.location.reload();
     });
 
-    socket.on('joined_user', function(userData) {
-        console.debug('joined_user', userData);
-        var joinedUser = $scope.users.firstOrUndefined(function(u){
-            return u.id === userData.id;
+    socket.on('joined_user', function(data) {
+        console.debug('joined_user', data);
+        var joinedUser = $scope.users.first(function(u){
+            return u.id === data.id;
         });
         if(joinedUser === undefined){
-            joinedUser = new User(userData);
-            $scope.users.push(joinedUser);
-            $scope.users.sort(CompareTwoUsers);
+            joinedUser = new User(data);
+            if(joinedUser.id !== $scope.currentUserId){
+                $scope.users.push(joinedUser);
+                $scope.users.sort(CompareTwoUsers);
+            }
         }
         if(joinedUser.id === $scope.masterId){
             joinedUser.makeMaster();
@@ -43,9 +80,10 @@ function AppCtrl($scope, socket) {
         alertify.success("Пользователь "+joinedUser.name+" присоединился к нам :)");
     });
 
-    socket.on('user_quit', function(id) {
-        var whoQuit = $scope.users.firstOrUndefined(function(u){
-                return u.id === id;
+    socket.on('user_quit', function(data) {
+        console.debug('user_quit', data);
+        var whoQuit = $scope.users.first(function(u){
+                return u.id === data.user_id;
             }
         );
         if(whoQuit !== undefined){
@@ -60,6 +98,18 @@ function AppCtrl($scope, socket) {
 
     socket.on('accepted_contact', function(data) {
         console.debug('accepted_contact', data);
+        $scope.contactFrom = $scope.users.firstOrDefault($scope.currentUser, function(u){
+            return u.contact !== undefined && u.contact.id === data.contact_id;
+        });
+        if(data.user_id === $scope.currentUser.id) {
+            $scope.contactTo = $scope.currentUser;
+        }
+        else {
+            $scope.contactTo = $scope.users.findById(data.user_id);
+        }
+        $scope.secondsLeft = data.seconds_left;
+        switchContacting();
+        $timeout($scope.onTimeout, 1000);
     });
 
     socket.on('broken_contact', function(data) {
@@ -72,6 +122,10 @@ function AppCtrl($scope, socket) {
 
     socket.on('successful_contact_connection', function(data) {
         console.debug('successful_contact_connection', data);
+        var contactOwner = $scope.users.firstOrDefault($scope.currentUser, function(u){
+            return u.contact !== undefined && u.contact.id === data.contact_id;
+        });
+        contactOwner.removeContact(data.contact_id);
     });
 
     socket.on('game_complete', function(data) {
@@ -79,9 +133,11 @@ function AppCtrl($scope, socket) {
     });
 
     socket.on('next_letter_opened', function(data) {
+        console.debug(data);
         var letter = data.letter;
         $scope.availableWordPart += letter;
         alertify.success("Открыта новая буква: " + letter + "!");
+        switchNormal();
     });
 
     socket.on('unsuccessful_contact_connection', function(data) {
@@ -93,7 +149,7 @@ function AppCtrl($scope, socket) {
         var game = room_state.game;
         var users = [];
         for(var i = 0; i < room_state.users.length; i++){
-            var contactData = game.contacts.firstOrUndefined(function(x){
+            var contactData = game.contacts.first(function(x){
                 return x.author_id === room_state.users[i].id;
             });
             var user = new User(room_state.users[i], contactData);
@@ -118,16 +174,4 @@ function AppCtrl($scope, socket) {
 
     socket.on('disconnect', function() {
     });
-
-    $scope.createContact = function(){
-
-    };
-
-    $scope.acceptContact = function(contact){
-        if(contact !== undefined){
-            var fullGuess = $scope.availableWordPart+contact.guess;
-            socket.emit('contact_accept', {'contact_id': contact.id, 'word' : fullGuess});
-            contact.guess = '';
-        }
-    };
 }

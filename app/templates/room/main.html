@@ -26,12 +26,26 @@
     <div class="row">
         <div class="span6">
             <div class="row">
-                <div class="game-unit span6">
-                    <div class="game-stats">
+                <div class="game-unit span6" ng-switch on="infoBarMode">
+                    <div class="game-stats" ng-switch-when="stats">
                         <h3>Информация об игре</h3>
                         <p><b>Отгадано</b>: {{availableWordPart}}</p>
                         <p><b>Всего букв</b>: {{wordLength}}</p>
                         <p><b>Вы</b>: {{currentUser.name}} ({{currentUser.role}}) </p>
+                    </div>
+                    <div class="timer span6" ng-switch-when="timer">
+                        <h2 class="text-error">
+                            Контакт от
+                            <span class="text-info">{{contactFrom.name}}</span>
+                            к <span class="text-info">{{contactTo.name}}</span> через {{secondsLeft}} секунд
+                        </h2>
+                        <div class="input-prepend input-append" ng-show="currentUser.isMaster">
+                            <span class="add-on">{{availableWordPart}}</span>
+                            <input class="span2" id="prependedInput" type="text">
+                            <button class="btn btn-danger" type="button">
+                                <i class="icon-remove icon-white"></i>  Разорвать контакт
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -79,9 +93,6 @@
                 <button class="btn btn-primary span1" type="button" ng-show="currentUser.isMaster">
                     <i class="icon-pencil icon-white"></i>
                 </button>
-                <button class="btn btn-danger span1" type="button" ng-show="currentUser.isMaster">
-                    <i class="icon-remove icon-white"></i>
-                </button>
             </div>
 
             <div class="row">
@@ -113,7 +124,7 @@
                                     {{user.contact.desc}}
                                 </p>
                                 <div class="span5 user-controls">
-                                    <div class="input-prepend input-append"  ng-show="!currentUser.isMaster">
+                                    <div class="input-prepend input-append"  ng-show="!currentUser.isMaster && showUserControls">
                                         <span class="add-on">{{availableWordPart}}</span>
                                         <input class="span2 contact-suffix" ng-model="user.contact.guess" type="text"/>
                                         <button class="btn btn-success" type="button" ng-click="acceptContact(user.contact)">
@@ -123,6 +134,7 @@
                                 </div>
                             </div>
                         </div>
+                    </li>
                 </ul>
             </div>
         </div>
