@@ -22,8 +22,13 @@ function AppCtrl($scope, socket, $timeout) {
         contactOwner.removeContact(contactId);
     }
 
-    $scope.createContact = function(){
-
+    $scope.createContact = function(val, desc){
+        var data = {
+            'contact_value': val,
+            'description': desc,
+            'author_id': $scope.currentUser.id
+        };
+        socket.emit('create_contact', data);
     };
 
     $scope.acceptContact = function(contact){
@@ -40,17 +45,26 @@ function AppCtrl($scope, socket, $timeout) {
         breakGuess = "";
     };
 
-    function switchNormal(){
+    $scope.switchNormal = function(){
         $scope.infoBarMode = "stats";
+        $scope.showUserControls = true;
+    };
+
+    $scope.switchContact = function(){
+        $scope.infoBarMode = "timer";
+        $scope.showUserControls = false;
+    };
+
+    function switchCreateContact(){
+        if($scope.currentUser.isMaster)
+            return;
+        $scope.infoBarMode = "createContact";
         $scope.showUserControls = true;
     }
 
-    function switchContacting(){
-        $scope.infoBarMode = "timer";
-        $scope.showUserControls = false;
-    }
+    $scope.switchCreateContact = switchCreateContact;
 
-    switchNormal();
+    $scope.switchNormal();
 
     $scope.modes = {"contacting":"timer", "normal":"stats"};
 
@@ -123,7 +137,7 @@ function AppCtrl($scope, socket, $timeout) {
         }
         $scope.secondsLeft = data.seconds_left;
         $scope.currentContactId = data.contact_id;
-        switchContacting();
+        $scope.switchContact();
         $timeout($scope.onTimeout, 1000);
     });
 
@@ -131,7 +145,7 @@ function AppCtrl($scope, socket, $timeout) {
         console.debug('broken_contact', data);
         deleteContact(data.contact_id);
         alertify.log("Контакт был разорван ведущим.");
-        switchNormal();
+        $scope.switchNormal();
     });
 
     socket.on('unsuccessful_contact_breaking', function(data) {
@@ -149,7 +163,7 @@ function AppCtrl($scope, socket, $timeout) {
         console.debug('game_complete', data);
         var message = 'Игра успешно завершена! Было отгадано слово ' + data.word;
         alertify.log( message, function () {
-            // after clicking OK
+            // TODO after clicking OK
         });
     });
 
@@ -158,7 +172,7 @@ function AppCtrl($scope, socket, $timeout) {
         var letter = data.letter;
         $scope.availableWordPart += letter;
         alertify.log("Открыта новая буква: " + letter + "!");
-        switchNormal();
+        $scope.switchNormal();
     });
 
     socket.on('unsuccessful_contact_connection', function(data) {

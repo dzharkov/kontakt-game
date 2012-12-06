@@ -183,3 +183,7 @@ body {
     padding: 30px 5% 30px;
     margin: 20px 50px 20px;
 }
+
+#createContactForm {
+    margin-top: 10px;
+}

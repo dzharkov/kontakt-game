@@ -47,6 +47,42 @@
                             </button>
                         </div>
                     </div>
+                    <form class="span6 form-horizontal" id="createContactForm" ng-switch-when="createContact">
+                        <div class="control-group">
+                            <div class="control-label">
+                                Значение контакта
+                            </div>
+                            <div class="controls">
+                                <div class="input-prepend">
+                                    <span class="add-on">{{availableWordPart}}</span>
+                                    <input class="span2" type="text" ng-model="newContactValue"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="control-label">
+                                Описание
+                            </div>
+                            <div class="controls">
+                                <input class="span3" type="text"
+                                       ng-maxlength="200"
+                                       ng-model="newContactDescription"/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <button class="btn btn-danger offset1"
+                                    type="button"
+                                    ng-click="switchNormal()">
+                                <i class="icon-remove icon-white"></i>  Отмена
+                            </button>
+                            <button class="btn btn-success"
+                                    type="button"
+                                    ng-click="createContact(newContactValue, newContactDescription)">
+                                <i class="icon-plus icon-white"></i>  Создать контакт
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
             <div class="row chatwindow">
@@ -87,7 +123,7 @@
 
         <div class="span6">
             <div class="row">
-                <button class="btn btn-success span1" type="button" ng-click="createContact()" ng-show="!currentUser.isMaster">
+                <button class="btn btn-success span1" type="button" ng-click="switchCreateContact()" ng-show="!currentUser.isMaster">
                     <i class="icon-plus icon-white"></i>
                 </button>
                 <button class="btn btn-primary span1" type="button" ng-show="currentUser.isMaster">
