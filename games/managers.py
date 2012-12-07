@@ -144,7 +144,7 @@ class GameManager(object):
         if not contact.is_accepted:
             raise Exception(u'trying to check unaccepted contact')
         if not contact.is_active:
-            raise Exception(u'contact shouldn\'t be inactive')
+            return
         if contact.check_at > timezone.now():
             raise Exception(u'it\'s too early')
 
