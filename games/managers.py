@@ -201,6 +201,7 @@ class GameManager(object):
     def remove_contact(self, contact):
         del self.active_contacts[contact.id]
         contact.is_active = False
+        contact.game.remove_active_contact(contact)
         self.persist_contact(contact)
 
     def break_contact(self, user, game, contact_id, word):

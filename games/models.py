@@ -21,9 +21,15 @@ class Game(object):
         self._active_contacts[contact.id] = contact
 
     def remove_active_contact(self, contact):
+        if contact == self.last_accepted_contact:
+            self.last_accepted_contact = None
+        if contact == self.last_successful_contact:
+            self.last_successful_contact = None
         del self._active_contacts[contact.id]
 
     def remove_active_contacts(self):
+        self.last_successful_contact = None
+        self.last_successful_contact = None
         self._active_contacts = dict()
 
     @property
