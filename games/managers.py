@@ -212,6 +212,9 @@ class GameManager(object):
         if not contact.is_active:
             raise GameError(u'Контакт уже не активен')
 
+        if word == game.guessed_word:
+            raise GameError(u'Нельзя пытаться разорвать контакт загаданным вами словом')
+
         if contact.is_right_word(word):
             contact.get_broken()
             self.persist_contact(contact)
