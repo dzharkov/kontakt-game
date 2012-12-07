@@ -106,8 +106,7 @@ def reload_msg(msg):
     if msg.kind == 'message':
         if msg.body == 'games':
             game_manager.load_active_games()
-        for connection in connections.values():
-            connection.emit('reload')
+        connection_manager.emit_broadcast('reload')
 
 def start_server():
     game_manager.load_active_games()
