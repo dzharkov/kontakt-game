@@ -75,7 +75,7 @@ class Game(object):
 
     @property
     def json_representation(self):
-        return {
+        result = {
             'id' : self.id,
             'master_id' : self.master.id,
             'available_word_part' : self.available_word_part(),
@@ -83,6 +83,11 @@ class Game(object):
             'state' : self.state,
             'contacts' : [contact.json_representation for contact in self._active_contacts.values()]
         }
+
+        if self.last_accepted_contact:
+            result['accepted_contact'] = self.last_accepted_contact.id
+
+        return result
 
 class Contact(object):
 
