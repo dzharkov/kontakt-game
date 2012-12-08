@@ -71,6 +71,11 @@ function AppCtrl($scope, socket, $timeout) {
         $scope.showUserControls = false;
     };
 
+    $scope.switchEndGame = function(){
+        $scope.infoBarMode = "completed";
+        $scope.showUserControls = false;
+    };
+
     function switchCreateContact(){
         if($scope.currentUser.isMaster)
             return;
@@ -81,8 +86,6 @@ function AppCtrl($scope, socket, $timeout) {
     $scope.switchCreateContact = switchCreateContact;
 
     $scope.switchNormal();
-
-    $scope.modes = {"contacting":"timer", "normal":"stats"};
 
     $scope.onTimeout = function(){
         $scope.secondsLeft--;
@@ -180,14 +183,16 @@ function AppCtrl($scope, socket, $timeout) {
         alertify.log("Контакт успешно завершился (слово - "+data.word+")!");
     });
 
-    socket.on('game_complete', function(data) {
+    function GameComplete(data){
         console.debug('game_complete', data);
         EachUser(function(){this.removeContact();});
         var message = 'Игра успешно завершена! Было отгадано слово ' + data.word;
         alertify.log( message, function () {
-            // TODO after clicking OK
+            $scope.switchEndGame();
         });
-    });
+    }
+
+    socket.on('game_complete', GameComplete);
 
     socket.on('next_letter_opened', function(data) {
         console.debug('next_letter_opened', data);
@@ -233,6 +238,9 @@ function AppCtrl($scope, socket, $timeout) {
 
         if(game.accepted_contact !== undefined){
             AcceptedContact(game.accepted_contact);
+        }
+        if(game.state === 'complete'){
+            $scope.switchEndGame();
         }
     });
 

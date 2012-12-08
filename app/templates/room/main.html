@@ -33,6 +33,12 @@
                         <p><b>Всего букв</b>: {{wordLength}}</p>
                         <p><b>Вы</b>: {{currentUser.name}} ({{currentUser.role}}) </p>
                     </div>
+                    <div class="game-stats" ng-switch-when="completed">
+                        <h3>Игра завершена</h3>
+                        <p><b>Отгадано</b>: {{availableWordPart}}</p>
+                        <p><b>Всего букв</b>: {{wordLength}}</p>
+                        <p><b>Вы</b>: {{currentUser.name}} ({{currentUser.role}}) </p>
+                    </div>
                     <div class="timer span6" ng-switch-when="timer">
                         <h2 class="text-error">
                             Контакт от
