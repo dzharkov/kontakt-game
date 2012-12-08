@@ -151,6 +151,7 @@ function AppCtrl($scope, socket, $timeout) {
         else {
             $scope.contactTo = $scope.users.findById(data.user_id);
         }
+        alertify.log("Есть контакт!");
         $scope.secondsLeft = data.seconds_left;
         $scope.currentContactId = data.contact_id;
         $scope.switchContact();
