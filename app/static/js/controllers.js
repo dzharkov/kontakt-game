@@ -54,9 +54,10 @@ function AppCtrl($scope, socket, $timeout) {
         }
     };
 
-    $scope.breakContact = function(breakGuess){
+    $scope.breakContact = function(breakGuess, contact){
         var fullGuess = $scope.availableWordPart+breakGuess;
-        socket.emit('contact_break', {'contact_id': $scope.currentContactId, 'word' : fullGuess});
+        var contactId = (contact !== undefined)?contact.id:$scope.currentContactId;
+        socket.emit('contact_break', {'contact_id': contactId, 'word' : fullGuess});
         breakGuess = "";
     };
 

@@ -170,6 +170,13 @@
                                             <i class="icon-magnet icon-white"></i>
                                             Установить контакт </button>
                                     </div>
+                                    <div class="input-prepend input-append" ng-show="currentUser.isMaster  && showUserControls">
+                                        <span class="add-on">{{availableWordPart}}</span>
+                                        <input class="span2"type="text" ng-model="breakGuess"/>
+                                        <button class="btn btn-danger" type="button" ng-click="breakContact(breakGuess, user.contact)">
+                                            <i class="icon-remove icon-white"></i>  Разорвать контакт
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
