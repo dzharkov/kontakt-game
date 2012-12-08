@@ -1,5 +1,11 @@
 function AppCtrl($scope, socket, $timeout) {
     function CompareTwoUsers (u1, u2){
+        if(u1.isMaster){
+            return -1;
+        }
+        if(u2.isMaster) {
+            return 1;
+        }
         if(u1.hasContact && !u2.hasContact){
             return -1;
         }
@@ -20,6 +26,7 @@ function AppCtrl($scope, socket, $timeout) {
             return u.contact !== undefined && u.contact.id === contactId;
         });
         contactOwner.removeContact(contactId);
+        $scope.users.sort(CompareTwoUsers);
     }
 
     $scope.createContact = function(val, desc){

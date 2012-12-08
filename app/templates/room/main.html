@@ -140,7 +140,10 @@
                         </a>
                         <div class="media-body" ng-switch on="user.hasContact">
                             <div class="row" ng-switch on="user.isOnline">
-                                <h4 class="media-heading span2">{{user.name}}</h4>
+                                <h4 class="media-heading span2">{{user.name}}
+                                    <span ng-show="user.isMaster">(Ведущий)</span>
+                                </h4>
+
                                 <span class="span1 offset2 text-success" ng-switch-when="true">
                                     <i>Online</i>
                                 </span>
