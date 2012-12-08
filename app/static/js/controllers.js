@@ -21,11 +21,19 @@ function AppCtrl($scope, socket, $timeout) {
         return u1.nickname < u2.nickname;
     }
 
-    function deleteContact(contactId) {
+    function EachUser(func){
+        var users = $scope.users;
+        for(var i = 0; i < users.length; i++){
+            func.apply(users[i]);
+        }
+        func.apply($scope.currentUser);
+    }
+
+    function RemoveContactById(contactId) {
         var contactOwner = $scope.users.firstOrDefault($scope.currentUser, function(u){
             return u.contact !== undefined && u.contact.id === contactId;
         });
-        contactOwner.removeContact(contactId);
+        contactOwner.removeContact();
         $scope.users.sort(CompareTwoUsers);
     }
 
@@ -151,7 +159,7 @@ function AppCtrl($scope, socket, $timeout) {
 
     socket.on('broken_contact', function(data) {
         console.debug('broken_contact', data);
-        deleteContact(data.contact_id);
+        RemoveContactById(data.contact_id);
         alertify.log("Контакт был разорван ведущим.");
         $scope.switchNormal();
     });
@@ -163,12 +171,13 @@ function AppCtrl($scope, socket, $timeout) {
 
     socket.on('successful_contact_connection', function(data) {
         console.debug('successful_contact_connection', data);
-        deleteContact(data.contact_id);
+        EachUser(function(){this.removeContact();});
         alertify.log("Контакт успешно завершился (слово - "+data.word+")!");
     });
 
     socket.on('game_complete', function(data) {
         console.debug('game_complete', data);
+        EachUser(function(){this.removeContact();});
         var message = 'Игра успешно завершена! Было отгадано слово ' + data.word;
         alertify.log( message, function () {
             // TODO after clicking OK
@@ -179,12 +188,15 @@ function AppCtrl($scope, socket, $timeout) {
         console.debug('next_letter_opened', data);
         var letter = data.letter;
         $scope.availableWordPart += letter;
-        alertify.log("Открыта новая буква: " + letter + "!");
+        alertify.log("Открыта новая буква: " + letter);
         $scope.switchNormal();
     });
 
     socket.on('unsuccessful_contact_connection', function(data) {
         console.debug('unsuccessful_contact_connection', data);
+        alertify.error("Неудачный контакт");
+        $scope.switchNormal();
+        RemoveContactById(data.contact_id);
     });
 
     socket.on('room_state_update', function(room_state) {

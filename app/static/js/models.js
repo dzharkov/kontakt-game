@@ -36,8 +36,8 @@ function User(userData, contactData){
         this.role = "Ведущий";
     };
 
-    this.removeContact = function(contactId){
-        if(this.contact !== undefined && this.contact.id === contactId){
+    this.removeContact = function(){
+        if(this.contact !== undefined){
             delete this.contact;
             this.hasContact = false;
         }
