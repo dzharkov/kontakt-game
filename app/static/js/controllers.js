@@ -129,6 +129,7 @@ function AppCtrl($scope, socket, $timeout) {
 
     socket.on('game_error', function(data) {
         console.debug('game_error', data);
+        alertify.error(data);
     });
 
     socket.on('accepted_contact', function(data) {
@@ -175,7 +176,7 @@ function AppCtrl($scope, socket, $timeout) {
     });
 
     socket.on('next_letter_opened', function(data) {
-        console.debug(data);
+        console.debug('next_letter_opened', data);
         var letter = data.letter;
         $scope.availableWordPart += letter;
         alertify.log("Открыта новая буква: " + letter + "!");
