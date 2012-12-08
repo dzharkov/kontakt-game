@@ -141,7 +141,8 @@ function AppCtrl($scope, socket, $timeout) {
         alertify.error(data);
     });
 
-    socket.on('accepted_contact', function(data) {
+    function AcceptedContact(data){
+        //data = {contact_id:int}
         console.debug('accepted_contact', data);
         $scope.contactFrom = $scope.users.firstOrDefault($scope.currentUser, function(u){
             return u.contact !== undefined && u.contact.id === data.contact_id;
@@ -157,7 +158,9 @@ function AppCtrl($scope, socket, $timeout) {
         $scope.currentContactId = data.contact_id;
         $scope.switchContact();
         $timeout($scope.onTimeout, 1000);
-    });
+    }
+
+    socket.on('accepted_contact', AcceptedContact);
 
     socket.on('broken_contact', function(data) {
         console.debug('broken_contact', data);
@@ -227,6 +230,10 @@ function AppCtrl($scope, socket, $timeout) {
         $scope.availableWordPart = game.available_word_part;
         $scope.wordLength = game.word_length;
         $scope.masterId = game.master_id;
+
+        if(game.accepted_contact !== undefined){
+            AcceptedContact(game.accepted_contact);
+        }
     });
 
     socket.on('disconnect', function() {

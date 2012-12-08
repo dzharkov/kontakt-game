@@ -85,7 +85,10 @@ class Game(object):
         }
 
         if self.last_accepted_contact:
-            result['accepted_contact'] = self.last_accepted_contact.id
+            result['accepted_contact'] = {
+                'id':self.last_accepted_contact.id,
+                'seconds_left':self.last_accepted_contact.seconds_left
+            }
 
         return result
 
