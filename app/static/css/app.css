@@ -120,20 +120,15 @@ body {
     border-radius: 0 0 8px 8px;
 }
 
-.chat-entry .prompt {
-    margin: 29px 0 0 54px;
-    width: 40px;
-    cursor: pointer;
+.chat-entry input {
+    width: 100%;
 }
 
-.chat-entry form {
-    margin: 18px 0 10px 15px;
-}
 
-.chat-entry form textarea {
-    width: 300px;
-    height: 30px;
-    resize: none;
+.chat-entry .row {
+    margin-left: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .chat-transcript-wrapper {
