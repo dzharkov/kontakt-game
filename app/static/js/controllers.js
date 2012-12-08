@@ -186,10 +186,9 @@ function AppCtrl($scope, socket, $timeout) {
     function GameComplete(data){
         console.debug('game_complete', data);
         EachUser(function(){this.removeContact();});
+        $scope.switchEndGame();
         var message = 'Игра успешно завершена! Было отгадано слово ' + data.word;
-        alertify.log( message, function () {
-            $scope.switchEndGame();
-        });
+        alertify.log(message);
     }
 
     socket.on('game_complete', GameComplete);
