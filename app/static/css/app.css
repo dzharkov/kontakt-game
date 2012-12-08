@@ -21,13 +21,8 @@ body {
     color: white;
     text-align: center;
     text-shadow: 0 1px 3px rgba(0, 0, 0, .4), 0 0 30px rgba(0, 0, 0, .075);
-    background: #020031;
+    background: #556270;
 
-    background: -webkit-linear-gradient(45deg, #020031 0%, #6D3353 100%);
-    background: -moz-linear-gradient(45deg, #020031 0%, #6D3353 100%);
-    background: -o-linear-gradient(45deg, #020031 0%, #6D3353 100%);
-    background: -ms-linear-gradient(45deg, #020031 0%, #6D3353 100%);
-    background: linear-gradient(45deg, #020031 0%, #2d656d 100%);
 }
 
 .hero-unit-custom h1 {
@@ -116,7 +111,7 @@ body {
 
 .chat-entry {
     width: 100%;
-    background-color: #A9C1A7;
+    background-color: #556270;
     border-radius: 0 0 8px 8px;
 }
 
