@@ -186,6 +186,7 @@ function AppCtrl($scope, socket, $timeout) {
     function GameComplete(data){
         console.debug('game_complete', data);
         EachUser(function(){this.removeContact();});
+        $scope.availableWordPart = data.word;
         $scope.switchEndGame();
         var message = 'Игра успешно завершена! Было отгадано слово ' + data.word;
         alertify.log(message);
