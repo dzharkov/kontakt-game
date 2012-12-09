@@ -4,6 +4,7 @@
 {% block scripts %}
     <script src="/static/js/lib/socket.io.js"></script>
     <script src="/static/js/lib/alertify.min.js"></script>
+    <script src="/static/js/lib/spin.min.js"></script>
     <script src="/static/js/lib/angular.js"></script>
     <script src="/static/js/models.js"></script>
     <script src="/static/js/app.js"></script>
@@ -22,8 +23,12 @@
     <iframe id="_hidden" style="display:none"></iframe>
 
 {%verbatim%}
+
+
 <div class="container" ng-app="myApp" ng-controller="AppCtrl">
-    <div class="row">
+    <div id="preloader" ng-hide="pageLoaded">
+    </div>
+    <div class="row" ng-show="pageLoaded">
         <div class="span6">
             <div class="row">
                 <div class="game-unit span6" ng-switch on="infoBarMode">

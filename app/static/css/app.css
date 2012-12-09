@@ -176,3 +176,16 @@ body {
 #createContactForm {
     margin-top: 10px;
 }
+
+#preloader {
+    position: fixed;
+    border-radius: 10px;
+    background-color: #252525;
+    height: 80px;
+    width: 80px;
+    margin-left: -40px;
+    left: 50%;
+    top: 50%;
+    z-index: 9999;
+}
+
