@@ -6,7 +6,7 @@ import tornado.ioloop
 from tornadio2 import SocketConnection, TornadioRouter, SocketServer, event
 import tornadio2.gen
 
-from database import redis
+from database import redis_connection
 from managers import user_manager, connection_manager
 from games.managers import game_manager
 from games.exceptions import GameError
@@ -36,7 +36,8 @@ class GameCatcher(SocketConnection):
     def on_login(self, session_id, room_id):
         room_id = int(room_id)
         self.room_id = room_id
-        redis.hget('room:' + str(room_id), session_id, callback=self.process_login)
+        user_id = redis_connection.hget('room:' + str(room_id), session_id)
+        self.process_login(user_id)
 
     def process_login(self, user_id):
         if not user_id:
