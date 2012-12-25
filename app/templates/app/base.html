@@ -9,6 +9,12 @@
   <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.min.css">
   <link rel="stylesheet" href="/static/css/app.css">
+  <link href='http://fonts.googleapis.com/css?family=Poiret+One&subset=cyrillic' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Lobster&subset=cyrillic' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Scada:400italic,400&subset=cyrillic' rel='stylesheet' type='text/css'>
+
+
+
   {% block styles %}
   {% endblock styles %}
 
@@ -18,28 +24,16 @@
 </head>
 
 <body>
-  <div class="navbar">
+  <div class="navbar navbar-inverse">
   <div class="navbar-inner">
-    <div class="container-fluid">
-      <a class="brand" href="/" name="top">Kontakt</a>
+    <div class="container">
+      <a class="brand" href="/" name="top">Есть Контакт</a>
       <div class="nav-collapse collapse">
         <ul class="nav">
-          <li><a href="/"><i class="icon-home"></i> Главная</a></li>
+          <li><a href="/">Главная</a></li>
 
-          <li class="divider-vertical"></li>
-
-          <li><a href="/about"><i class="icon-info-sign"></i> О нас</a></li>
+          <li><a href="/about">О нас</a></li>
         </ul>
-        <div class="btn-group pull-right">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-            <i class="icon-user"></i> admin <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#"><i class="icon-wrench"></i> Settings</a></li>
-            <li class="divider"></li>
-            <li><a href="#"><i class="icon-share"></i> Logout</a></li>
-          </ul>
-        </div>
       </div>
       <!--/.nav-collapse -->
     </div>

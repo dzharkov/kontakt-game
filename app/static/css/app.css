@@ -1,11 +1,60 @@
 html {
-    background: transparent url(/static/escheresque.png) repeat;
+    background-color: #58443C;
     height: 100%;
 }
 
 body {
     background-color: transparent;
     height: 100%;
+}
+
+.btn {
+    border-radius: 0px;
+    font-family: 'Poiret One';
+    font-size: 16px;
+    font-weight: 800;
+}
+
+
+.input-prepend.input-append .btn:last-child {
+    border-radius: 0px;
+}
+
+.input-prepend.input-append .add-on:first-child, .input-prepend.input-append .btn:first-child {
+    border-radius: 0px;
+}
+
+.navbar-inverse .navbar-inner {
+    background-color: #c45039;
+    color: #ffffff;
+    background-image: none;
+    border-radius: 0px;
+    border: none;
+    height: 60px;
+}
+
+.navbar .container {
+    height: 60px;
+}
+
+.navbar-inverse .nav > li > a {
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);    
+    font-family: 'Poiret One';
+    font-size: 20px;
+    font-weight: 600;
+    padding: 20px;
+    color: white;
+}
+
+.navbar .brand {
+    display: block;
+    float: left;
+    padding: 20px;
+    font-family: 'Lobster';
+    font-size: 24px;
+    font-weight: 400;
+    color: #ffffff;
 }
 
 .wrapper {
@@ -18,20 +67,25 @@ body {
 }
 
 .hero-unit-custom {
-    color: white;
+    color: #f3f3f3;
     text-align: center;
     text-shadow: 0 1px 3px rgba(0, 0, 0, .4), 0 0 30px rgba(0, 0, 0, .075);
-    background: #556270;
+    background-color: #c45039;
+    border-radius: 0px;
+    margin-top: 100px;
 
 }
 
 .hero-unit-custom h1 {
+    font-family: 'Lobster';
     font-size: 120px;
+    font-weight: 100;
     line-height: 1;
     letter-spacing: -2px;
 }
 
 .hero-unit-custom p {
+    font-family: 'Lobster';
     font-size: 40px;
     font-weight: 200;
     line-height: 1.25;
@@ -41,25 +95,27 @@ body {
     margin-bottom: 20px;
 }
 
+#user-list{
+    background-color: #F0F0F0;
+}
+
 .user-list-wrapper {
     margin-top: 10px;
     height: 560px;
     overflow-y: auto;
-    -webkit-box-shadow: 0px 3px 25px 1px rgba(0, 0, 0, .2);
-    box-shadow: 0px 3px 25px 1px rgba(0, 0, 0, .2);
-    border-radius: 8px;
-    background-color: #ffffff;
 }
 
 .user-list-wrapper li {
-    margin-bottom: -10px;
+    margin-bottom: -15px;
+    border-bottom: 1px solid #D2D2D2;
+    border-top: 1px solid white;
+    cursor: pointer;
 }
 
 .user-entry {
     overflow-y: hidden;
     min-height: 50px;
     max-height: 160px;
-    background-color: #F3F3F3;
 }
 
 .user-entry img {
@@ -68,7 +124,7 @@ body {
 }
 
 .user-entry:hover {
-    background-color: #EEEEEE;
+    background-color: #E0E0E0;
 }
 
 .user-entry:hover .user-controls {
@@ -76,11 +132,17 @@ body {
 }
 
 .user-entry .user-text {
+    font-family: 'Scada';
+    font-size: 16px;
+    color: #2B587A;
     font-style: italic;
 }
 
 .user-entry .media-heading {
     color: #2B587A;
+    font-family: 'Scada';
+    font-size: 22px;
+    font-weight: 100;
 }
 
 .user-entry .user-controls {
@@ -89,10 +151,11 @@ body {
 
 .game-unit {
     background-color: white;
-    border-radius: 8px;
     width: 100%;
     margin-left: 0px;
     height: 160px;
+    font-family: 'Scada';
+    font-size: 18px;
 }
 
 .game-stats {
@@ -105,14 +168,12 @@ body {
     background-color: #ffffff;
     -webkit-box-shadow: 0px 3px 25px 1px rgba(0, 0, 0, .2);
     box-shadow: 0 3px 25px 1px rgba(0, 0, 0, .2);
-    border-radius: 8px;
     height: auto;
 }
 
 .chat-entry {
     width: 100%;
-    background-color: #556270;
-    border-radius: 0 0 8px 8px;
+    background-color: #c45039;
 }
 
 .chat-entry input {
@@ -147,6 +208,9 @@ body {
     -ms-word-break: break-all;
     word-break: break-all;
     font-weight: bold;
+    font-family: 'Scada';
+    font-size: 16px;
+    font-weight: 300;
     color: #2B587A;
 }
 
@@ -189,3 +253,8 @@ body {
     z-index: 9999;
 }
 
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+}

@@ -122,8 +122,8 @@
                         <div class="span4">
                             <input class="new-chat" type="text"/>
                         </div>
-                        <button title="Отправить сообщение" class="btn btn-primary span1">
-                            <i class="icon-envelope icon-white"></i>
+                        <button title="Отправить сообщение" class="btn span1">
+                            <i class="icon-envelope"></i>
                         </button>
                     </div>
                 </section>
@@ -135,13 +135,13 @@
                 <button class="btn btn-success span1" type="button" ng-click="switchCreateContact()" ng-show="!currentUser.isMaster">
                     <i class="icon-plus icon-white"></i>
                 </button>
-                <button class="btn btn-primary span1" type="button" ng-show="currentUser.isMaster">
-                    <i class="icon-pencil icon-white"></i>
+                <button class="btn span1" type="button" ng-show="currentUser.isMaster">
+                    <i class="icon-pencil"></i>
                 </button>
             </div>
 
             <div class="row">
-                <ul class="media-list span6 user-list-wrapper">
+                <ul class="media-list span6 user-list-wrapper" id="user-list">
                     <li class="media user-entry" ng-repeat="user in users">
 
                         <a class="pull-left" href="#">
