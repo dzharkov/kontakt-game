@@ -13,12 +13,20 @@ class Game(object):
 
         self._active_contacts = dict()
 
+        self._user_words = set()
+
         self.last_successful_contact = None
         self.last_accepted_contact = None
         self.is_active = True
 
     def add_active_contact(self, contact):
         self._active_contacts[contact.id] = contact
+
+    def add_used_word(self, word):
+        self._user_words.add(word)
+
+    def is_word_used(self, word):
+        return word in self._user_words
 
     def remove_active_contact(self, contact):
         if contact == self.last_accepted_contact:

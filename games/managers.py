@@ -75,6 +75,9 @@ class GameManager(object):
 
         game.room_id = 1
 
+        for word_row in db.query("SELECT word FROM " + CONTACT_TABLE_NAME + " WHERE game_id = %s AND is_active=0", game.id):
+            game.add_used_word(word_row.word)
+
         self.active_games[game.id] = game
         return game
 
@@ -137,6 +140,9 @@ class GameManager(object):
         self.persist_entity(game, GAME_TABLE_NAME, columns)
 
     def persist_contact(self, contact):
+        if not contact.is_active:
+            contact.game.add_used_word(contact.word)
+
         if contact.is_accepted:
             contact.connected_user_id = contact.connected_user.id
         else:
@@ -243,6 +249,9 @@ class GameManager(object):
 
         if len(filter(lambda x: x.author == user, game.active_contacts)) > 0:
             raise GameError(u'В игре уже есть ваш контакт')
+
+        if game.is_word_used(contact_word):
+            raise GameError(u'Контакт с таким словом уже был')
 
         if not game.can_be_contact_word(contact_word):
             raise GameError(u'Контакт с таким словом не может быть создан')
