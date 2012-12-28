@@ -27,10 +27,13 @@ class GameCatcher(SocketConnection):
         self.room_id = None
         self.user_id = None
         self.user = None
-        self.game = None
 
     def listen(self):
         connection_manager.add_connection(self)
+    
+    @property
+    def current_room_game(self):
+        return game_manager.get_game_in_room(self.room_id)
 
     @event('login')
     def on_login(self, session_id, room_id):
@@ -51,8 +54,6 @@ class GameCatcher(SocketConnection):
 
             connection_manager.add_user_room_connection(self)
 
-            self.game = game_manager.get_game_in_room(self.room_id)
-
             self.emit('login_result', { 'result' : 1, 'user_id' : self.user_id })
             self.on_room_state_request()
 
@@ -61,17 +62,17 @@ class GameCatcher(SocketConnection):
     @event('contact_accept')
     @emit_game_errors
     def on_contact_accept(self, contact_id, word):
-        game_manager.accept_contact(self.user, self.game, int(contact_id), word)
+        game_manager.accept_contact(self.user, self.current_room_game, int(contact_id), word)
 
     @event('contact_break')
     @emit_game_errors
     def on_contact_break(self, contact_id, word):
-        game_manager.break_contact(self.user, self.game, int(contact_id), word)
+        game_manager.break_contact(self.user, self.current_room_game, int(contact_id), word)
 
     @event('contact_create')
     @emit_game_errors
     def on_contact_create(self, word, description):
-        game_manager.create_contact(self.user, self.game, word, description)
+        game_manager.create_contact(self.user, self.current_room_game, word, description)
 
     @event('game_start')
     @emit_game_errors
@@ -81,15 +82,16 @@ class GameCatcher(SocketConnection):
     @event('room_state_request')
     def on_room_state_request(self):
         result = dict()
-        result['game'] = self.game.json_representation
+        game = self.current_room_game
+        result['game'] = game.json_representation
         all_users = set(connection_manager.online_users_in_room(self.room_id))
 
-        for contact in self.game.active_contacts:
+        for contact in game.active_contacts:
             all_users.add(contact.author)
             if contact.connected_user:
                 all_users.add(contact.connected_user)
 
-        all_users.add(self.game.master)
+        all_users.add(game.master)
 
         result['users'] = [user.json_representation for user in all_users]
 
