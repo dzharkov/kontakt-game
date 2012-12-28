@@ -84,6 +84,10 @@ function AppCtrl($scope, socket, $timeout) {
         breakGuess = "";
     };
 
+    $scope.startGame = function() {
+        socket.emit('game_start', {});
+    };
+
     $scope.switchNormal = function(){
         $scope.infoBarMode = "stats";
         $scope.showUserControls = true;
@@ -267,6 +271,15 @@ function AppCtrl($scope, socket, $timeout) {
         }
 
         $scope.pageLoaded = true;
+    });
+
+    socket.on('master_selection_unsuccessful', function(data) {
+        alert('Не удалось выбрать ведущего');
+    });
+
+    socket.on('master_selection_started', function(data) {
+
+        alert(data.user_id + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );
     });
 
     socket.on('disconnect', function() {

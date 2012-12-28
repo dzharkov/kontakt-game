@@ -47,7 +47,8 @@ class GameManager(object):
         self.timeout_callbacks = []
 
     def load_active_games(self):
-        self.last_game_in_room = dict()
+        self.current_game_in_room = dict()
+        self.last_complete_game_in_room = dict()
         self.active_contacts = dict()
         self.timeout_callbacks = []
         for row in db.query("SELECT * FROM %s" % GAME_TABLE_NAME):
@@ -75,7 +76,7 @@ class GameManager(object):
         for word_row in db.query("SELECT word FROM " + CONTACT_TABLE_NAME + " WHERE game_id = %s AND is_active=0", game.id):
             game.add_used_word(word_row.word)
 
-        self.last_game_in_room[game.room_id] = game
+        self.current_game_in_room[game.room_id] = game
 
         return game
 
@@ -109,7 +110,7 @@ class GameManager(object):
         return contact
 
     def get_game_in_room(self, room_id):
-        return self.last_game_in_room[room_id]
+        return self.current_game_in_room[room_id]
 
     def find_active_contact(self, id, game):
         try:
@@ -270,5 +271,37 @@ class GameManager(object):
         connection_manager.emit_for_room(game.room_id, 'created_contact', contact.json_representation)
 
         return
+
+    def choose_master(self, game):
+        room_id = game.room_id
+        game.state = GAME_STATE_NOT_STARTED
+        connection_manager.emit_for_room(room_id, 'master_selection_unsuccessful', {})
+
+        if room_id in self.last_complete_game_in_room:
+            self.current_game_in_room[room_id] = self.last_complete_game_in_room[room_id]
+
+    def start_game(self, user, room_id):
+        current_game = self.get_game_in_room(room_id)
+
+        if current_game.is_active:
+            raise GameError(u'Игра уже запущена')
+
+        if current_game.is_complete:
+            self.last_complete_game_in_room[room_id] = current_game
+            current_game = Game()
+            current_game.room_id = room_id
+            self.current_game_in_room[room_id] = current_game
+
+        current_game.state = GAME_STATE_MASTER_SELECTION
+
+        choose_master_at = timezone.now() + timedelta(seconds=settings.MASTER_SELECTION_TIMEOUT)
+
+        self.add_timeout_callback(choose_master_at, lambda: self.choose_master(current_game))
+
+        seconds_left = max(0, (choose_master_at - timezone.now()).seconds)
+
+        connection_manager.emit_for_room(room_id, 'master_selection_started', seconds_left=seconds_left, user_id=user.id)
+
+
 
 game_manager = GameManager()

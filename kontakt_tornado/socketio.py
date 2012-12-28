@@ -73,6 +73,11 @@ class GameCatcher(SocketConnection):
     def on_contact_create(self, word, description):
         game_manager.create_contact(self.user, self.game, word, description)
 
+    @event('game_start')
+    @emit_game_errors
+    def on_game_start(self):
+        game_manager.start_game(self.user, self.room_id)
+
     @event('room_state_request')
     def on_room_state_request(self):
         result = dict()

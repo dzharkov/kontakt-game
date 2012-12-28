@@ -91,6 +91,10 @@ class Game(object):
     def is_not_started(self):
         return self.state == GAME_STATE_NOT_STARTED
 
+    @property
+    def is_active(self):
+        return self.is_running or self.is_master_selecting
+
     def show_next_letter(self):
         self.guessed_letters+=1
 
@@ -184,7 +188,6 @@ class Contact(object):
     @property
     def json_representation(self):
         result = {
-            'id' : self.id,
             'author_id' : self.author.id,
             'desc' : self.description,
         }
