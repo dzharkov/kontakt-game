@@ -105,7 +105,6 @@ class Game(object):
     @property
     def json_representation(self):
         result = {
-            'id' : self.id,
             'master_id' : self.master.id,
             'available_word_part' : self.available_word_part(),
             'word_length' : len(self.guessed_word),
@@ -188,6 +187,7 @@ class Contact(object):
     @property
     def json_representation(self):
         result = {
+            'id' : self.id,
             'author_id' : self.author.id,
             'desc' : self.description,
         }
