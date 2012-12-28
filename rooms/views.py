@@ -17,14 +17,14 @@ def clear_room(request):
     return HttpResponse("cleared");
 
 @render_to('room/main.html')
-def room(request, id):
+def room(request, room_id, user_id):
 
-    user = User.objects.get(pk=id)
+    user = User.objects.get(pk=user_id)
     user.backend = 'django.contrib.auth.backends.ModelBackend'
     login(request, user)
 
     redis_connection = redis.Redis(host=settings.REDIS_HOST, db=settings.REDIS_DB)
 
-    redis_connection.hset('room:1', request.session.session_key, id)
+    redis_connection.hset('room:' + str(room_id), request.session.session_key, user.id)
 
-    return { 'room_id' : 1 }
+    return { 'room_id' : int(room_id) }
