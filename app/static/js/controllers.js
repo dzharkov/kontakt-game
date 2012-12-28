@@ -63,11 +63,10 @@ function AppCtrl($scope, socket, $timeout) {
 
     $scope.createContact = function(val, desc){
         var data = {
-            'contact_value': val,
-            'description': desc,
-            'author_id': $scope.currentUser.id
+            'word': $scope.availableWordPart + val,
+            'description': desc
         };
-        socket.emit('create_contact', data);
+        socket.emit('contact_create', data);
     };
 
     $scope.acceptContact = function(contact){

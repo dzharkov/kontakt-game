@@ -122,8 +122,12 @@ class GameManager(object):
 
     def persist_entity(self, obj, table_name, columns):
         args_values=map(lambda x: obj.__getattribute__(x), columns)
-        args_values.append(obj.id)
-        db.execute("UPDATE " + table_name + " SET " + ( ", ".join( map(lambda x: x + '=%s', columns) ) ) +" WHERE id = %s", *args_values)
+        set_string = " SET " + ( ", ".join( map(lambda x: x + '=%s', columns) ) )
+        if hasattr(obj, 'id'):
+            args_values.append(obj.id)
+            db.execute("UPDATE " + table_name + set_string +" WHERE id = %s", *args_values)
+        else:
+            obj.id = db.execute_lastrowid("INSERT INTO " + table_name + set_string, *args_values)
 
     def persist_game(self, game):
         game.master_id = game.master.id
@@ -135,8 +139,13 @@ class GameManager(object):
     def persist_contact(self, contact):
         if contact.is_accepted:
             contact.connected_user_id = contact.connected_user.id
+        else:
+            contact.connected_user_id = None
 
-        columns = ('connected_user_id', 'connected_word', 'connected_at', 'is_active', 'is_successful')
+        contact.author_id = contact.author.id
+        contact.game_id = contact.game.id
+
+        columns = ('game_id', 'word', 'description', 'author_id', 'connected_user_id', 'connected_word', 'connected_at', 'is_active', 'is_successful', 'created_at')
 
         self.persist_entity(contact, CONTACT_TABLE_NAME, columns)
 
@@ -222,5 +231,37 @@ class GameManager(object):
             connection_manager.emit_for_room(game.room_id, 'broken_contact', contact_id=contact_id, user_id=user.id)
         else:
             connection_manager.emit_for_user_in_room(user.id, game.room_id, 'unsuccessful_contact_breaking', { 'contact_id' : contact_id })
+
+    def create_contact(self, user, game, contact_word, description):
+        self.check_callbacks()
+
+        if not game.is_active:
+            raise GameError(u'Игра уже закончена')
+
+        if game.master == user:
+            raise GameError(u'Ведущий не может создавать контакты')
+
+        if len(filter(lambda x: x.author == user, game.active_contacts)) > 0:
+            raise GameError(u'В игре уже есть ваш контакт')
+
+        if not game.can_be_contact_word(contact_word):
+            raise GameError(u'Контакт с таким словом не может быть создан')
+
+        if len(description) == 0:
+            raise GameError(u'Нельзя создать контакт с пустым описанием')
+
+        contact = Contact()
+        contact.author = user
+        contact.created_at = timezone.now()
+        contact.word = contact_word
+        contact.description = description
+
+        contact.game = game
+        self.persist_contact(contact)
+        game.add_active_contact(contact)
+
+        connection_manager.emit_for_room(game.room_id, 'created_contact', contact.json_representation)
+
+        return
 
 game_manager = GameManager()
