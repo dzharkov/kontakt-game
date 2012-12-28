@@ -275,7 +275,7 @@ class GameManager(object):
 
     def choose_master(self, game):
         room_id = game.room_id
-        game.state = GAME_STATE_NOT_STARTED
+        game.terminate_master_selection_process()
         connection_manager.emit_for_room(room_id, 'master_selection_unsuccessful', {})
 
         if room_id in self.last_complete_game_in_room:
@@ -293,16 +293,10 @@ class GameManager(object):
             current_game.room_id = room_id
             self.current_game_in_room[room_id] = current_game
 
-        current_game.state = GAME_STATE_MASTER_SELECTION
+        current_game.start_master_selection_process()
 
-        choose_master_at = timezone.now() + timedelta(seconds=settings.MASTER_SELECTION_TIMEOUT)
+        self.add_timeout_callback(current_game.select_master_at, lambda: self.choose_master(current_game))
 
-        self.add_timeout_callback(choose_master_at, lambda: self.choose_master(current_game))
-
-        seconds_left = max(0, (choose_master_at - timezone.now()).seconds)
-
-        connection_manager.emit_for_room(room_id, 'master_selection_started', seconds_left=seconds_left, user_id=user.id)
-
-
+        connection_manager.emit_for_room(room_id, 'master_selection_started', seconds_left=current_game.seconds_left_before_master_selection, user_id=user.id)
 
 game_manager = GameManager()

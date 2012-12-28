@@ -21,6 +21,8 @@ class Game(object):
 
         self._user_words = set()
 
+        self._select_master_at = None
+
         self.last_successful_contact = None
         self.last_accepted_contact = None
 
@@ -32,6 +34,27 @@ class Game(object):
 
     def is_word_used(self, word):
         return word in self._user_words
+
+    def start_master_selection_process(self):
+        now = timezone.now()
+        self._select_master_at = now + timedelta(seconds=settings.MASTER_SELECTION_TIMEOUT)
+        self.state = GAME_STATE_MASTER_SELECTION
+
+    def terminate_master_selection_process(self):
+        self._select_master_at = None
+        self.state = GAME_STATE_NOT_STARTED
+
+    @property
+    def seconds_left_before_master_selection(self):
+        if not self._select_master_at:
+            return 0
+        return max(0, (self._select_master_at - timezone.now()).seconds)
+
+    @property
+    def select_master_at(self):
+        if not self._select_master_at:
+            return 0
+        return self._select_master_at
 
     def remove_active_contact(self, contact):
         if contact == self.last_accepted_contact:
