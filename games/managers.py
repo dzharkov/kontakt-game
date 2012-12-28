@@ -18,7 +18,7 @@ class ContactManager(object):
             cursor.execute("TRUNCATE games_contact")
             cursor.execute("TRUNCATE games_game")
             cursor.execute("SET foreign_key_checks = 1")
-            cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2,1,1)")
+            cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2,1,'running')")
             cursor.execute(u"INSERT INTO `games_contact` VALUES (1,1,'2012-11-22 16:56:25',3,'мода','как сказала Коко Шанель, она выходит сама из себя',NULL,NULL,NULL,1,0),(2,1,'2012-11-22 17:09:04',4,'моделирование','Оно бывает имитационным, эволюционным, и изредка даже психологическим',NULL,NULL,NULL,1,0)")
         except Exception:
             transaction.rollback()
@@ -133,7 +133,7 @@ class GameManager(object):
     def persist_game(self, game):
         game.master_id = game.master.id
 
-        columns = ('room_id', 'master_id', 'guessed_word', 'guessed_letters', 'is_active')
+        columns = ('room_id', 'master_id', 'guessed_word', 'guessed_letters', 'state')
 
         self.persist_entity(game, GAME_TABLE_NAME, columns)
 
@@ -239,8 +239,8 @@ class GameManager(object):
     def create_contact(self, user, game, contact_word, description):
         self.check_callbacks()
 
-        if not game.is_active:
-            raise GameError(u'Игра уже закончена')
+        if not game.is_running:
+            raise GameError(u'Игра не запущена')
 
         if game.master == user:
             raise GameError(u'Ведущий не может создавать контакты')

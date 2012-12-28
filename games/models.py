@@ -3,6 +3,11 @@ from datetime import timedelta
 
 from app import settings
 
+GAME_STATE_NOT_STARTED = 'not_started'
+GAME_STATE_MASTER_SELECTION = 'master_selection'
+GAME_STATE_RUNNING = 'running'
+GAME_STATE_COMPLETE = 'complete'
+
 class Game(object):
 
     def __init__(self):
@@ -10,6 +15,7 @@ class Game(object):
         self.master = None
         self.guessed_word = None
         self.guessed_letters = None
+        self.state = GAME_STATE_NOT_STARTED
 
         self._active_contacts = dict()
 
@@ -17,7 +23,6 @@ class Game(object):
 
         self.last_successful_contact = None
         self.last_accepted_contact = None
-        self.is_active = True
 
     def add_active_contact(self, contact):
         self._active_contacts[contact.id] = contact
@@ -62,17 +67,29 @@ class Game(object):
         return self._active_contacts.active_accepted().count() > 0
 
     @property
-    def state(self):
-        return 'running' if self.guessed_letters < len(self.guessed_word) else 'complete'
-
-    @property
     def has_active_accepted_contact(self):
         return self.last_accepted_contact and self.last_accepted_contact.is_active
 
     def end(self):
         self.guessed_letters = len(self.guessed_word)
         self.remove_active_contacts()
-        self.is_active = False
+        self.state = GAME_STATE_COMPLETE
+
+    @property
+    def is_running(self):
+        return self.state == GAME_STATE_RUNNING
+
+    @property
+    def is_complete(self):
+        return self.state == GAME_STATE_COMPLETE
+
+    @property
+    def is_master_selecting(self):
+        return self.state == GAME_STATE_MASTER_SELECTION
+
+    @property
+    def is_not_started(self):
+        return self.state == GAME_STATE_NOT_STARTED
 
     def show_next_letter(self):
         self.guessed_letters+=1
