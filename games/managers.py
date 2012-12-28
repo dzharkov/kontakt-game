@@ -18,7 +18,7 @@ class ContactManager(object):
             cursor.execute("TRUNCATE games_contact")
             cursor.execute("TRUNCATE games_game")
             cursor.execute("SET foreign_key_checks = 1")
-            cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2,1)")
+            cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2,1,1)")
             cursor.execute(u"INSERT INTO `games_contact` VALUES (1,1,'2012-11-22 16:56:25',3,'мода','как сказала Коко Шанель, она выходит сама из себя',NULL,NULL,NULL,1,0),(2,1,'2012-11-22 17:09:04',4,'моделирование','Оно бывает имитационным, эволюционным, и изредка даже психологическим',NULL,NULL,NULL,1,0)")
         except Exception:
             transaction.rollback()
@@ -43,12 +43,11 @@ CONTACT_TABLE_NAME = 'games_contact'
 class GameManager(object):
 
     def __init__(self):
-        self.active_games = dict()
         self.active_contacts = dict()
         self.timeout_callbacks = []
 
     def load_active_games(self):
-        self.active_games = dict()
+        self.last_game_in_room = dict()
         self.active_contacts = dict()
         self.timeout_callbacks = []
         for row in db.query("SELECT * FROM %s" % GAME_TABLE_NAME):
@@ -73,12 +72,11 @@ class GameManager(object):
             if contact.is_accepted:
                 self.create_contact_check_task(contact)
 
-        game.room_id = 1
-
         for word_row in db.query("SELECT word FROM " + CONTACT_TABLE_NAME + " WHERE game_id = %s AND is_active=0", game.id):
             game.add_used_word(word_row.word)
 
-        self.active_games[game.id] = game
+        self.last_game_in_room[game.room_id] = game
+
         return game
 
     def check_callbacks(self):
@@ -111,7 +109,7 @@ class GameManager(object):
         return contact
 
     def get_game_in_room(self, room_id):
-        return self.active_games.values()[0]
+        return self.last_game_in_room[room_id]
 
     def find_active_contact(self, id, game):
         try:
@@ -135,7 +133,7 @@ class GameManager(object):
     def persist_game(self, game):
         game.master_id = game.master.id
 
-        columns = ('master_id', 'guessed_word', 'guessed_letters', 'is_active')
+        columns = ('room_id', 'master_id', 'guessed_word', 'guessed_letters', 'is_active')
 
         self.persist_entity(game, GAME_TABLE_NAME, columns)
 
