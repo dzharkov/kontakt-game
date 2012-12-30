@@ -289,6 +289,11 @@ function AppCtrl($scope, socket, $timeout) {
         alert(data.user_id + ' стал кандидатом на должность ведущего!');
     });
 
+    socket.on('contact_creation', function(data) {
+        var contact = data.contact;
+        alert('Новый контакт от пользователя' + contact.author_id + ' c текстом: ' + contact.desc);
+    });
+
     socket.on('master_selection_started', function(data) {
 
         alert(data.user_id + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );

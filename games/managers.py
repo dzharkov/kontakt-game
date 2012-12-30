@@ -277,7 +277,7 @@ class GameManager(object):
 
         self.active_contacts[contact.id] = contact
 
-        connection_manager.emit_for_room(game.room_id, 'created_contact', contact.json_representation)
+        connection_manager.emit_for_room(game.room_id, 'contact_creation', contact=contact.json_representation)
 
         return
 
