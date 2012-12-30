@@ -285,6 +285,10 @@ function AppCtrl($scope, socket, $timeout) {
        alert('Ваше слово - ' + data.word + ' принято, вы - кандидат на должность ведущего!');
     });
 
+    socket.on('master_contender', function(data) {
+        alert(data.user_id + ' стал кандидатом на должность ведущего!');
+    });
+
     socket.on('master_selection_started', function(data) {
 
         alert(data.user_id + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );

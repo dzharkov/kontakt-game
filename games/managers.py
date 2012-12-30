@@ -316,6 +316,7 @@ class GameManager(object):
 
         game.add_master_contender(user, word)
         connection_manager.emit_for_user_in_room(user.id, game.room_id, 'game_word_accepted', word=word)
+        connection_manager.emit_for_room(game.room_id, 'master_contender', user_id=user.id)
 
     def start_game(self, user, room_id):
         current_game = self.get_game_in_room(room_id)
