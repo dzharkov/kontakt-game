@@ -290,6 +290,11 @@ function AppCtrl($scope, socket, $timeout) {
         alert(data.user_id + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );
     });
 
+    socket.on('game_running', function(data) {
+        var game = data.game;
+        alert('Игра началась! Ведущий ' + game.master_id + ', начало слова - ' + game.available_word_part + ', длина - ' + game.word_length);
+    });
+
     socket.on('disconnect', function() {
     });
 }

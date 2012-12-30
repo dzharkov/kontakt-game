@@ -51,7 +51,11 @@ class Game(object):
         return user.id in self._master_contenders
 
     def add_master_contender(self, user, proposed_word):
-        self._master_contenders[user.id] = proposed_word
+        self._master_contenders[user.id] = (user, proposed_word)
+
+    @property
+    def master_contenders(self):
+        return self._master_contenders.values()
 
     @property
     def seconds_left_before_master_selection(self):

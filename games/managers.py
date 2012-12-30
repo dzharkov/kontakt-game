@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.utils import timezone
 from models import *
 from exceptions import GameError
+import random
 
 from app import settings
 
@@ -279,11 +280,28 @@ class GameManager(object):
 
     def choose_master(self, game):
         room_id = game.room_id
-        game.terminate_master_selection_process()
-        connection_manager.emit_for_room(room_id, 'master_selection_unsuccessful', {})
 
-        if room_id in self.last_complete_game_in_room:
-            self.current_game_in_room[room_id] = self.last_complete_game_in_room[room_id]
+        contenders = game.master_contenders
+
+        game.terminate_master_selection_process()
+
+        if len(contenders) < 1:
+            if room_id in self.last_complete_game_in_room:
+                self.current_game_in_room[room_id] = self.last_complete_game_in_room[room_id]
+
+            connection_manager.emit_for_room(room_id, 'master_selection_unsuccessful', {})
+        else:
+            (master, word)  = contenders[random.randint(0, len(contenders)-1)]
+
+            game.master = master
+            game.guessed_word = word
+            game.guessed_letters = 1
+            game.state = GAME_STATE_RUNNING
+
+            self.persist_game(game)
+
+            connection_manager.emit_for_room(room_id, 'game_running', game=game.json_representation)
+
 
     def add_master_contender(self, game, user, word):
         if not game.is_master_selecting:
