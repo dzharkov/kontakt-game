@@ -92,6 +92,10 @@ function AppCtrl($scope, socket, $timeout) {
         socket.emit('game_word_propose', { 'word' : word });
     };
 
+    $scope.cancelContact = function(contactId) {
+        socket.emit('contact_cancel', { 'contact_id' : contactId });
+    };
+
     $scope.switchNormal = function(){
         $scope.infoBarMode = "stats";
         $scope.showUserControls = true;
@@ -292,6 +296,10 @@ function AppCtrl($scope, socket, $timeout) {
     socket.on('contact_creation', function(data) {
         var contact = data.contact;
         alert('Новый контакт от пользователя' + contact.author_id + ' c текстом: ' + contact.desc);
+    });
+
+    socket.on('contact_canceled', function(data) {
+        alert('Контакт ' + data.contact_id + ' отменен автором');
     });
 
     socket.on('master_selection_started', function(data) {

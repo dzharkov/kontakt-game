@@ -224,6 +224,22 @@ class GameManager(object):
         contact.game.remove_active_contact(contact)
         self.persist_contact(contact)
 
+    def cancel_contact(self, user, game, contact_id):
+        contact = self.find_active_contact(contact_id, game)
+
+        if user != contact.author:
+            raise GameError(u'Вы не автор контакта')
+
+        if not contact.is_active:
+            raise GameError(u'Контакт уже неактивен')
+
+        if contact.is_accepted:
+            raise GameError(u'Контакт уже принят')
+
+        self.remove_contact(contact)
+
+        connection_manager.emit_for_room(game.room_id, 'contact_canceled', contact_id=contact_id)
+
     def break_contact(self, user, game, contact_id, word):
         self.check_callbacks()
         contact = self.find_active_contact(contact_id, game)

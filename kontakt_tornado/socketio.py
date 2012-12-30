@@ -69,6 +69,11 @@ class GameCatcher(SocketConnection):
     def on_contact_break(self, contact_id, word):
         game_manager.break_contact(self.user, self.current_room_game, int(contact_id), word)
 
+    @event('contact_cancel')
+    @emit_game_errors
+    def on_contact_cancel(self, contact_id):
+        game_manager.cancel_contact(self.user, self.current_room_game, int(contact_id))
+
     @event('contact_create')
     @emit_game_errors
     def on_contact_create(self, word, description):
