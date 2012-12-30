@@ -29,6 +29,7 @@ class ConnectionManager(object):
     def remove_connection(self, connection):
         del self._all_connections[connection.__hash__()]
         if connection.user and connection == self._rooms_connections[connection.room_id][connection.user.id]:
+            connection.user.is_online = False
             connection.user_id = False
             del self._rooms_connections[connection.room_id][connection.user.id]
             del self._users_in_rooms[connection.room_id][connection.user.id]
