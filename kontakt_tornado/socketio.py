@@ -91,7 +91,8 @@ class GameCatcher(SocketConnection):
             if contact.connected_user:
                 all_users.add(contact.connected_user)
 
-        all_users.add(game.master)
+        if game.master:
+            all_users.add(game.master)
 
         result['users'] = [user.json_representation for user in all_users]
 

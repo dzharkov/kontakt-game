@@ -62,7 +62,8 @@ class GameManager(object):
         for field, value in row.iteritems():
             game.__setattr__(field, value)
 
-        game.master = user_manager.get_user_by_id(game.master_id)
+        if game.master_id:
+            game.master = user_manager.get_user_by_id(game.master_id)
 
         for contact_row in db.query("SELECT * FROM " + CONTACT_TABLE_NAME + " WHERE game_id = %s AND is_active=1", game.id):
             contact = self.add_contact_from_db_row(contact_row)
@@ -133,7 +134,10 @@ class GameManager(object):
             obj.id = db.execute_lastrowid("INSERT INTO " + table_name + set_string, *args_values)
 
     def persist_game(self, game):
-        game.master_id = game.master.id
+        if game.master:
+            game.master_id = game.master.id
+        else:
+            game.master_id = None
 
         columns = ('room_id', 'master_id', 'guessed_word', 'guessed_letters', 'state')
 
