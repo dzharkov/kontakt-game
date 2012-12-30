@@ -285,6 +285,17 @@ class GameManager(object):
         if room_id in self.last_complete_game_in_room:
             self.current_game_in_room[room_id] = self.last_complete_game_in_room[room_id]
 
+    def add_master_contender(self, game, user, word):
+        if not game.is_master_selecting:
+            raise GameError(u'Сейчас не время выбора ведущего')
+        if len(word) < 5:
+            raise GameError(u'Слишком короткое слово')
+        if game.is_user_already_master_contender(user):
+            raise GameError(u'Вы уже предложили свое слово')
+
+        game.add_master_contender(user, word)
+        connection_manager.emit_for_user_in_room(user.id, game.room_id, 'game_word_accepted', word=word)
+
     def start_game(self, user, room_id):
         current_game = self.get_game_in_room(room_id)
 

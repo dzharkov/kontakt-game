@@ -88,6 +88,10 @@ function AppCtrl($scope, socket, $timeout) {
         socket.emit('game_start', {});
     };
 
+    $scope.proposeGameWord = function(word) {
+        socket.emit('game_word_propose', { 'word' : word });
+    };
+
     $scope.switchNormal = function(){
         $scope.infoBarMode = "stats";
         $scope.showUserControls = true;
@@ -275,6 +279,10 @@ function AppCtrl($scope, socket, $timeout) {
 
     socket.on('master_selection_unsuccessful', function(data) {
         alert('Не удалось выбрать ведущего');
+    });
+
+    socket.on('game_word_accepted', function(data) {
+       alert('Ваше слово - ' + data.word + ' принято, вы - кандидат на должность ведущего!');
     });
 
     socket.on('master_selection_started', function(data) {

@@ -18,6 +18,7 @@ class Game(object):
         self.state = GAME_STATE_NOT_STARTED
 
         self._active_contacts = dict()
+        self._master_contenders = dict()
 
         self._user_words = set()
 
@@ -39,10 +40,18 @@ class Game(object):
         now = timezone.now()
         self._select_master_at = now + timedelta(seconds=settings.MASTER_SELECTION_TIMEOUT)
         self.state = GAME_STATE_MASTER_SELECTION
+        self._master_contenders = dict()
 
     def terminate_master_selection_process(self):
         self._select_master_at = None
         self.state = GAME_STATE_NOT_STARTED
+        self._master_contenders = dict()
+
+    def is_user_already_master_contender(self, user):
+        return user.id in self._master_contenders
+
+    def add_master_contender(self, user, proposed_word):
+        self._master_contenders[user.id] = proposed_word
 
     @property
     def seconds_left_before_master_selection(self):

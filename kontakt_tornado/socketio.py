@@ -79,6 +79,11 @@ class GameCatcher(SocketConnection):
     def on_game_start(self):
         game_manager.start_game(self.user, self.room_id)
 
+    @event('game_word_propose')
+    @emit_game_errors
+    def on_game_word_proposed(self, word):
+        game_manager.add_master_contender(self.current_room_game, self.user, word)
+
     @event('room_state_request')
     def on_room_state_request(self):
         result = dict()

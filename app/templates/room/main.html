@@ -46,6 +46,10 @@
                         <button class="btn btn-danger" type="button" ng-click="startGame()">
                             <i class="icon-remove icon-white"></i>  Начать игру
                         </button>
+                        <input class="span2" type="text" ng-model="gameWord"/>
+                        <button class="btn btn-danger" type="button" ng-click="proposeGameWord(gameWord)">
+                            <i class="icon-remove icon-white"></i>  Предлоджить слово
+                        </button>
                     </div>
                     <div class="timer span6" ng-switch-when="timer">
                         <h2 class="text-error">
