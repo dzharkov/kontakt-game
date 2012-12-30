@@ -272,7 +272,10 @@ class GameManager(object):
 
         contact.game = game
         self.persist_contact(contact)
+
         game.add_active_contact(contact)
+
+        self.active_contacts[contact.id] = contact
 
         connection_manager.emit_for_room(game.room_id, 'created_contact', contact.json_representation)
 
