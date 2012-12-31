@@ -13,5 +13,5 @@ class Room(models.Model):
 
         if is_new:
             cursor = connection.cursor()
-            cursor.execute("INSERT INTO " + GAME_TABLE_NAME + " SET room_id = " + str(self.id))
+            cursor.execute("INSERT INTO " + GAME_TABLE_NAME + " SET room_id = " + str(self.id) + ", master_id = NULL, guessed_word = NULL, guessed_letters = NULL")
             transaction.commit_unless_managed()
