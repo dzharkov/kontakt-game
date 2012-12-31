@@ -74,3 +74,8 @@ def edit(request, id):
 
     return { 'form' : form }
 
+@render_to('room/list.html')
+@login_required
+def list(request):
+    rooms = Room.objects.all()
+    return { 'rooms' : rooms }

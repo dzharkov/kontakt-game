@@ -33,6 +33,9 @@
           <li><a href="/">Главная</a></li>
 
           <li><a href="/about">О нас</a></li>
+          {% if request.user.is_authenticated %}
+          <li><a href="{% url rooms.views.list %}">Комнаты</a></li>
+          {% endif %}
         </ul>
       </div>
       <!--/.nav-collapse -->

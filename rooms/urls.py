@@ -6,4 +6,5 @@ urlpatterns = patterns('rooms.views',
     url(r'^clear$', 'clear_room'),
     url(r'^create$', 'create'),
     url(r'^edit/(?P<id>\d+)$', 'edit'),
+    url(r'^list$', 'list'),
 )
