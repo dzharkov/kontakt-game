@@ -96,6 +96,10 @@ function AppCtrl($scope, socket, $timeout) {
         socket.emit('contact_cancel', { 'contact_id' : contactId });
     };
 
+    $scope.sendChatMessage = function(newChatMessage) {
+        socket.emit('chat_message_send', { 'text' : newChatMessage });
+    };
+
     $scope.switchNormal = function(){
         $scope.infoBarMode = "stats";
         $scope.showUserControls = true;
@@ -310,6 +314,11 @@ function AppCtrl($scope, socket, $timeout) {
     socket.on('game_running', function(data) {
         var game = data.game;
         alert('Игра началась! Ведущий ' + game.master_id + ', начало слова - ' + game.available_word_part + ', длина - ' + game.word_length);
+    });
+
+    socket.on('chat_message', function(data) {
+       var msg = data.msg;
+       alert('Новое сообщение от ' + msg.author_id + ' [' + msg.time + ']' + msg.text);
     });
 
     socket.on('disconnect', function() {

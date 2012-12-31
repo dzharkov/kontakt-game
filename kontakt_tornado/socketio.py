@@ -8,6 +8,7 @@ import tornadio2.gen
 
 from database import redis_connection
 from managers import user_manager, connection_manager
+from chats.managers import chat_manager
 from games.managers import game_manager
 from games.exceptions import GameError
 
@@ -104,9 +105,15 @@ class GameCatcher(SocketConnection):
         if game.master:
             all_users.add(game.master)
 
+        result['chat_messages'] = map(lambda x: x.json_representation, chat_manager.last_messages_in_room(self.room_id))
+
         result['users'] = [user.json_representation for user in all_users]
 
         self.emit('room_state_update', result)
+
+    @event('chat_message_send')
+    def on_chat_message_send(self, text):
+        chat_manager.new_message(self.room_id, self.user, text)
 
     def emit_for_room(self, event, *args, **kwargs):
         connection_manager.emit_for_room(self.room_id, event, *args, **kwargs)

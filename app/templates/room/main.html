@@ -131,9 +131,9 @@
                 <section class="chat-entry">
                     <div class="row">
                         <div class="span4">
-                            <input class="new-chat" type="text"/>
+                            <input class="new-chat" type="text" ng-model="newChatMessage"/>
                         </div>
-                        <button title="Отправить сообщение" class="btn span1">
+                        <button title="Отправить сообщение" class="btn span1" ng-click="sendChatMessage(newChatMessage)">
                             <i class="icon-envelope"></i>
                         </button>
                     </div>
