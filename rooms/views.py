@@ -79,3 +79,10 @@ def edit(request, id):
 def list(request):
     rooms = Room.objects.all()
     return { 'rooms' : rooms }
+
+@render_to('room/my_list.html')
+@login_required
+def my_list(request):
+    rooms = Room.objects.filter(owner=request.user).all()
+    return { 'rooms' : rooms }
+
