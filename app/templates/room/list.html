@@ -23,7 +23,7 @@
                     <td>{{ room.owner }}</td>
                     <td>{{ room.online_amount }}</td>
                     <td>{{ room.game_state_name }}</td>
-                    <td><a class="btn btn-mini btn-primary" href="/room/1/2" target="_blank">Войти</a>
+                    <td><a class="btn btn-mini btn-primary" href="{% url rooms.views.room room.id %}" target="_blank">Войти</a>
                     </td>
                 </tr>
                 {% endfor %}
