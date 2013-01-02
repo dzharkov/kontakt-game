@@ -21,8 +21,8 @@ class ContactManager(object):
             cursor.execute("TRUNCATE rooms_room")
             cursor.execute("SET foreign_key_checks = 1")
 
-            cursor.execute(u"INSERT INTO `rooms_room` VALUES (1,'Любители моделей', 2)")
-            cursor.execute(u"INSERT INTO `rooms_room` VALUES (2,'Экзистенциальная Россия', 2)")
+            cursor.execute(u"INSERT INTO `rooms_room` VALUES (1,'Любители моделей', 2, 0)")
+            cursor.execute(u"INSERT INTO `rooms_room` VALUES (2,'Экзистенциальная Россия', 2, 0)")
 
             cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2,1,'running')")
             cursor.execute(u"INSERT INTO `games_game` VALUES (2,2,'прустота',8,2,'complete')")
