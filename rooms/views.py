@@ -40,7 +40,7 @@ def room(request, room_id):
 
     redis_connection.hset('room:' + str(room_id), request.session.session_key, user.id)
 
-    return { 'room_id' : int(room_id) }
+    return { 'room' : room }
 
 def authorize_user_and_redirect_to_room(request, room_id, user_id):
     user = User.objects.get(pk=user_id)

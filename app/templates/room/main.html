@@ -1,6 +1,8 @@
 {% extends 'app/base.html' %}
 {% load verbatim %}
 
+{% block title %}Комната "{{ room.name }}"{% endblock title %}
+
 {% block scripts %}
     <script src="/static/js/lib/socket.io.js"></script>
     <script src="/static/js/lib/alertify.min.js"></script>
@@ -18,7 +20,7 @@
 {% endblock styles %}
 
 {% block body %}
-    <input id="room-id" type="hidden" value="{{ room_id }}"/>
+    <input id="room-id" type="hidden" value="{{ room.id }}"/>
     <input id="room-list-url" type="hidden" value="{% url rooms.views.list %}"/>
     <input id="session-key" type="hidden" value="{{ request.session.session_key }}"/>
     <iframe id="_hidden" style="display:none"></iframe>
