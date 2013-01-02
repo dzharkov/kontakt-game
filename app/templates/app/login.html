@@ -1,0 +1,17 @@
+{% extends 'app/base.html' %}
+
+{% block title %} Авторизация {% endblock title %}
+
+{% block body %}
+    <div class="span3" id="registration-div">
+        <h2>Авторизация</h2>
+        <form action="{% url app.views.account.login_view %}" method="post">{% csrf_token %}
+            {% if bad_attempt %}
+                <p class="text-error">Неверный логин/пароль</p>
+            {% endif %}
+            {{ form.as_p }}
+            <hr>
+            <input type="submit" value="Войти" class="btn btn-primary pull-left"/>
+        </form>
+    </div>
+{% endblock body %}

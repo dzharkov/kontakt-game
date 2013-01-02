@@ -41,6 +41,9 @@
           {% if request.user.is_authenticated %}
           <li><a href="{% url rooms.views.list %}">Комнаты</a></li>
           <li><a href="{% url rooms.views.my_list %}">Мои комнаты</a></li>
+          <li><a href="{% url app.views.account.logout_view %}">(вы {{ request.user.username }})Выход</a></li>
+          {% else %}
+          <li><a href="{% url app.views.account.login_view %}">Вход</a></li>
           {% endif %}
         </ul>
       </div>

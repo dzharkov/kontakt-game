@@ -23,4 +23,9 @@ class RegistrationForm(forms.Form):
 			raise forms.ValidationError('A user with such email already exists')
 		return super(RegistrationForm, self).clean(*args, **kwargs)
 
+class LoginForm(forms.Form):
+    login = forms.CharField(label="Логин", max_length=100)
+    password = forms.CharField(widget=forms.PasswordInput,label="Пароль")
+
+
 class EmptyForm(forms.Form): pass
