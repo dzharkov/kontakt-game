@@ -22,3 +22,5 @@ class RegistrationForm(forms.Form):
 		if User.objects.filter(email=self.data['email']).count()>0:
 			raise forms.ValidationError('A user with such email already exists')
 		return super(RegistrationForm, self).clean(*args, **kwargs)
+
+class EmptyForm(forms.Form): pass
