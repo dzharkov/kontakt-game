@@ -6,7 +6,7 @@ import tornado.ioloop
 from tornadio2 import SocketConnection, TornadioRouter, SocketServer, event
 import tornadio2.gen
 
-from database import redis_connection
+from database import redis_connection, db_modifier
 from managers import user_manager, connection_manager
 from chats.managers import chat_manager
 from games.managers import game_manager
@@ -47,6 +47,8 @@ class GameCatcher(SocketConnection):
         if not user_id:
             self.emit('login_result', { 'result' : 0 })
         else:
+            db_modifier.execute("UPDATE rooms_room SET online_amount = online_amount + 1 WHERE id = %s", self.room_id)
+
             self.user_id = int(user_id)
 
             user = user_manager.get_user_by_id(user_id)
@@ -121,6 +123,9 @@ class GameCatcher(SocketConnection):
     def on_close(self):
         if self.user:
             self.emit_for_room('user_quit', { 'user_id' : self.user_id })
+
+        db_modifier.execute("UPDATE rooms_room SET online_amount = online_amount - 1 WHERE id = %s", self.room_id)
+
         connection_manager.remove_connection(self)
 
     @tornadio2.gen.sync_engine
@@ -146,6 +151,8 @@ def start_server():
     app = tornado.web.Application(router.urls, socket_io_port=8001)
 
     from database import redis_subscriptions
+
+    db_modifier.execute("UPDATE rooms_room SET online_amount = 0")
 
     tornado.ioloop.IOLoop.instance().add_callback(
         lambda: redis_subscriptions.subscribe('reload', lambda x: redis_subscriptions.listen(reload_msg))
