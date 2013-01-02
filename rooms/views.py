@@ -24,7 +24,7 @@ def clear_room(request):
 
     redis_connection = create_redis_connection()
 
-    redis_connection.publish('reload', 'games')
+    redis_connection.publish('web_channel', 'reload_games')
 
     return HttpResponse("cleared")
 
@@ -97,6 +97,10 @@ def delete(request, id):
         return HttpResponseForbidden()
 
     room.delete()
+
+    redis = create_redis_connection()
+    redis.publish('web_channel', 'room_closed:' + str(id))
+
     return HttpResponseRedirect(reverse('rooms.views.my_list'))
 
 @render_to('room/list.html')

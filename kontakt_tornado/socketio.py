@@ -138,11 +138,17 @@ class GameCatcher(SocketConnection):
         return super(GameCatcher, self).on_event(name, *args, **kwargs)
 
 
-def reload_msg(msg):
+import re
+def web_channel_handler(msg):
     if msg.kind == 'message':
-        if msg.body == 'games':
+        if msg.body == 'reload_games':
             game_manager.load_active_games()
-        connection_manager.emit_broadcast('reload')
+            connection_manager.emit_broadcast('reload')
+            return
+
+        m = re.match('room_closed\:(\d+)', msg.body)
+        if m:
+            connection_manager.close_room(int(m.group(1)))
 
 def start_server():
     game_manager.load_active_games()
@@ -155,7 +161,11 @@ def start_server():
     db_modifier.execute("UPDATE rooms_room SET online_amount = 0")
 
     tornado.ioloop.IOLoop.instance().add_callback(
-        lambda: redis_subscriptions.subscribe('reload', lambda x: redis_subscriptions.listen(reload_msg))
+        lambda: redis_subscriptions.subscribe('web_channel', lambda x: redis_subscriptions.listen(web_channel_handler))
     )
+
+    #tornado.ioloop.IOLoop.instance().add_callback(
+    #    lambda: redis_subscriptions.subscribe('room_close', lambda x: redis_subscriptions.listen(room_close))
+    #)
 
     SocketServer(app)

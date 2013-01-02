@@ -27,6 +27,8 @@ class ConnectionManager(object):
         self._all_connections[connection.__hash__()] = connection
 
     def remove_connection(self, connection):
+        if not connection.__hash__() in  self._all_connections:
+            return
         del self._all_connections[connection.__hash__()]
         if connection.user and connection == self._rooms_connections[connection.room_id][connection.user.id]:
             connection.user.is_online = False
@@ -50,6 +52,15 @@ class ConnectionManager(object):
 
     def online_users_in_room(self, room_id):
         return self._users_in_rooms[room_id].values()
+
+    def close_room(self, room_id):
+        if not room_id in self._rooms_connections:
+            return
+
+        self.emit_for_room(room_id, 'room_closed')
+
+        for connection in self._rooms_connections[room_id].values():
+            self.remove_connection(connection)
 
 
 connection_manager = ConnectionManager()

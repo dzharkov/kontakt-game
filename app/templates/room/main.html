@@ -19,6 +19,7 @@
 
 {% block body %}
     <input id="room-id" type="hidden" value="{{ room_id }}"/>
+    <input id="room-list-url" type="hidden" value="{% url rooms.views.list %}"/>
     <input id="session-key" type="hidden" value="{{ request.session.session_key }}"/>
     <iframe id="_hidden" style="display:none"></iframe>
 
