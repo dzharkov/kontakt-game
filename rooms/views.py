@@ -21,7 +21,7 @@ def clear_room(request):
 
     redis_connection.publish('reload', 'games')
 
-    return HttpResponse("cleared");
+    return HttpResponse("cleared")
 
 @render_to('room/main.html')
 def room(request, room_id, user_id):
