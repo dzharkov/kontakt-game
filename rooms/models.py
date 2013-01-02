@@ -5,6 +5,7 @@ from games.managers import GAME_TABLE_NAME
 class Room(models.Model):
     name = models.CharField(max_length=200, blank=False, null=False)
     owner = models.ForeignKey(User)
+    online_amount = models.IntegerField(blank=False, default=0)
 
     def save(self, *args, **kwargs):
         is_new = self.id is None
