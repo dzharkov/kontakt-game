@@ -23,7 +23,7 @@
                         <td>
                             <a class="btn btn-mini btn-primary" href="/room/1/2" target="_blank">Войти</a>
                             <a class="btn btn-mini btn-info" href="{% url rooms.views.edit room.id %}">Изменить</a>
-                            <a class="btn btn-mini btn-danger" href="/room/1/2" target="_blank">Удалить</a>
+                            <a class="btn btn-mini btn-danger js-csrf-submit" href="{% url rooms.views.delete room.id %}">Удалить</a>
                         </td>
                     </tr>
                 {% endfor %}

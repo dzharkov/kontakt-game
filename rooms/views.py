@@ -1,6 +1,8 @@
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 import redis
 from annoying.decorators import render_to
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -81,6 +83,18 @@ def edit(request, id):
         form = RoomForm(instance=room)
 
     return { 'form' : form }
+
+@csrf_protect
+@login_required
+@require_POST
+def delete(request, id):
+    room = get_object_or_404(Room, pk=id)
+
+    if room.owner != request.user:
+        return HttpResponseForbidden()
+
+    room.delete()
+    return HttpResponseRedirect(reverse('rooms.views.my_list'))
 
 @render_to('room/list.html')
 @login_required
