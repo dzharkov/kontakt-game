@@ -16,10 +16,13 @@ from models import Room
 
 from app import settings
 
+def create_redis_connection():
+    return redis.Redis(host=settings.REDIS_HOST, db=settings.REDIS_DB)
+
 def clear_room(request):
     ContactManager.create_dummy_contacts_for_game()
 
-    redis_connection = redis.Redis(host=settings.REDIS_HOST, db=settings.REDIS_DB)
+    redis_connection = create_redis_connection()
 
     redis_connection.publish('reload', 'games')
 
@@ -33,7 +36,7 @@ def room(request, room_id):
 
     user = request.user
 
-    redis_connection = redis.Redis(host=settings.REDIS_HOST, db=settings.REDIS_DB)
+    redis_connection = create_redis_connection()
 
     redis_connection.hset('room:' + str(room_id), request.session.session_key, user.id)
 
