@@ -77,7 +77,7 @@ def edit(request, id):
 @render_to('room/list.html')
 @login_required
 def list(request):
-    rooms = Room.objects.all()
+    rooms = Room.objects.order_by('-online_amount').all()
     return { 'rooms' : rooms }
 
 @render_to('room/my_list.html')
