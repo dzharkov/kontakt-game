@@ -57,11 +57,11 @@ class ConnectionManager(object):
         for connection in self._rooms_connections[room_id].values():
             self.remove_connection(connection)
 
-    def close_room(self, room_id):
+    def room_became_deleted(self, room_id):
         if not room_id in self._rooms_connections:
             return
 
-        self.emit_for_room(room_id, 'room_closed')
+        self.emit_for_room(room_id, 'room_deleted')
 
         self._close_connections_in_room(room_id)
 

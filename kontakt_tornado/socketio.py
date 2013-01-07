@@ -146,9 +146,9 @@ def web_channel_handler(msg):
             connection_manager.emit_broadcast('reload')
             return
 
-        m = re.match('room_closed\:(\d+)', msg.body)
+        m = re.match('room_deleted\:(\d+)', msg.body)
         if m:
-            connection_manager.close_room(int(m.group(1)))
+            connection_manager.room_became_deleted(int(m.group(1)))
 
         m = re.match('room_private\:(\d+)', msg.body)
         if m:

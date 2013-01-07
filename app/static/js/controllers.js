@@ -321,7 +321,7 @@ function AppCtrl($scope, socket, $timeout) {
        alert('Новое сообщение от ' + msg.author_id + ' [' + msg.time + ']' + msg.text);
     });
 
-    socket.on('room_closed', function(data) {
+    socket.on('room_deleted', function(data) {
         alert('Комната удалена');
         document.location.href = document.getElementById('room-list-url').value;
     });

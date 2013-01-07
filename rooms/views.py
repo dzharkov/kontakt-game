@@ -125,7 +125,7 @@ def delete(request, room):
     room.delete()
 
     redis = create_redis_connection()
-    redis.publish('web_channel', 'room_closed:' + str(room.id))
+    redis.publish('web_channel', 'room_deleted:' + str(room.id))
 
     return HttpResponseRedirect(reverse('rooms.views.my_list'))
 
