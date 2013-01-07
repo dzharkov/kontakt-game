@@ -13,6 +13,7 @@ class AsyncDatabaseModifier():
         # create threads
         for i in xrange(pool_size):
             t = DbWorker(self)
+            t.daemon = True
             t.start()
             self._threads.append(t)
     def execute(self, query, *argv):
