@@ -9,7 +9,7 @@ class Room(models.Model):
     owner = models.ForeignKey(User, related_name='rooms_own')
     online_amount = models.IntegerField(blank=False, default=0)
     is_private = models.BooleanField(blank=False, default=False)
-    invited = models.ManyToManyField(User)
+    invited = models.ManyToManyField(User, related_name='rooms')
 
     def save(self, *args, **kwargs):
         is_new = self.id is None

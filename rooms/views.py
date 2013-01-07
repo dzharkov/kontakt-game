@@ -98,7 +98,13 @@ def edit(request, room):
     else:
         form = RoomForm(instance=room)
 
-    return { 'form' : form }
+    response_data = { 'form' : form }
+
+    if room.is_private:
+        response_data['invited_users'] = room.invited.order_by('username').all()
+        response_data['users'] = User.objects.exclude(pk=room.owner.id).exclude(rooms__pk=room.id).order_by('username').all()
+
+    return response_data
 
 @csrf_protect
 @login_required
@@ -112,6 +118,30 @@ def delete(request, room):
     redis.publish('web_channel', 'room_closed:' + str(id))
 
     return HttpResponseRedirect(reverse('rooms.views.my_list'))
+
+@csrf_protect
+@login_required
+@require_POST
+@room_edit
+def add_invite(request, room, user_id):
+    if room.is_private:
+        user = get_object_or_404(User, pk=user_id)
+
+        room.invited.add(user)
+
+    return HttpResponseRedirect(reverse('rooms.views.edit', args=[room.id]))
+
+@csrf_protect
+@login_required
+@require_POST
+@room_edit
+def delete_invite(request, room, user_id):
+    if room.is_private:
+        user = get_object_or_404(User, pk=user_id)
+
+        room.invited.remove(user)
+
+    return HttpResponseRedirect(reverse('rooms.views.edit', args=[room.id]))
 
 @render_to('room/list.html')
 @login_required
