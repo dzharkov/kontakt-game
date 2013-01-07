@@ -42,3 +42,10 @@ class Room(models.Model):
             return u'Не начата'
         if self.game_state == GAME_STATE_RUNNING:
             return u'В процессе'
+
+    def has_user_access(self, user):
+        if not self.is_private:
+            return True
+        if self.owner == user:
+            return True
+        return self.invited.filter(pk=user.id).count() > 0

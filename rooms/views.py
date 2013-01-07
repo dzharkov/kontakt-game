@@ -1,6 +1,7 @@
 from functools import wraps
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
+from django.db.models import Q
 import redis
 from annoying.decorators import render_to
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
@@ -51,6 +52,9 @@ def room(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
 
     user = request.user
+
+    if not room.has_user_access(user):
+        return HttpResponseRedirect(reverse('rooms.views.list'))
 
     redis_connection = create_redis_connection()
 
@@ -146,7 +150,9 @@ def delete_invite(request, room, user_id):
 @render_to('room/list.html')
 @login_required
 def list(request):
-    rooms = Room.objects.order_by('-online_amount').all()
+    rooms = Room.objects.filter(
+        Q(is_private=False) | Q(owner__pk=request.user.id) | Q (invited__pk=request.user.id)
+    ).distinct().order_by('-online_amount').all()
     return { 'rooms' : rooms }
 
 @render_to('room/my_list.html')
