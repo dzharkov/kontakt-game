@@ -151,6 +151,8 @@ def web_channel_handler(msg):
             connection_manager.close_room(int(m.group(1)))
 
 def start_server():
+    from app import settings
+    game_manager.load_valid_words_from_file(settings.VALID_WORDS_FILENAME)
     game_manager.load_active_games()
 
     router = TornadioRouter(GameCatcher)

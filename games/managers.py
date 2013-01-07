@@ -52,6 +52,7 @@ class GameManager(object):
     def __init__(self):
         self.active_contacts = dict()
         self.timeout_callbacks = []
+        self.valid_words = set()
 
     def load_active_games(self):
         self.current_game_in_room = dict()
@@ -62,6 +63,22 @@ class GameManager(object):
             self.add_game_from_db_row(row)
 
         self.check_callbacks()
+
+    def load_valid_words_from_file(self, filename):
+        f = open(filename)
+        while True:
+            line = f.readline()
+            if line == '': break
+            self.valid_words.add(unicode(line.strip(), 'utf-8'))
+        f.close()
+
+    def check_word_is_valid(self, word):
+        if len(word) < 3:
+            raise GameError(u'Слишком короткое слово')
+        if not word in self.valid_words:
+            raise GameError(u'Такого слова не существует в нашем словаре: ' + word)
+
+        return True
 
     def add_game_from_db_row(self, row):
         game = Game()

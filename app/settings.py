@@ -171,3 +171,5 @@ REDIS_DB = 1
 
 CONTACT_CHECKING_TIMEOUT = 10
 MASTER_SELECTION_TIMEOUT = 30
+
+VALID_WORDS_FILENAME = os.path.join( os.path.dirname(os.path.dirname(__file__)), 'games', 'ru_nouns.txt').replace('\\','/')
