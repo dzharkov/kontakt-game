@@ -6,8 +6,10 @@ from games.models import GAME_STATE_COMPLETE, GAME_STATE_MASTER_SELECTION, GAME_
 
 class Room(models.Model):
     name = models.CharField(max_length=200, blank=False, null=False)
-    owner = models.ForeignKey(User)
+    owner = models.ForeignKey(User, related_name='rooms_own')
     online_amount = models.IntegerField(blank=False, default=0)
+    is_private = models.BooleanField(blank=False, default=False)
+    invited = models.ManyToManyField(User)
 
     def save(self, *args, **kwargs):
         is_new = self.id is None
