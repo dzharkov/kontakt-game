@@ -91,6 +91,7 @@ def create(request):
 @login_required
 @room_edit
 def edit(request, room):
+    was_private = room.is_private
 
     if request.method == 'POST':
         form = RoomForm(request.POST, instance=room)
@@ -98,6 +99,11 @@ def edit(request, room):
         if form.is_valid():
             form.save(commit=False)
             room.save()
+
+            if room.is_private and not was_private:
+                redis = create_redis_connection()
+                redis.publish('web_channel', 'room_private:' + str(room.id))
+
             return HttpResponseRedirect(request.get_full_path())
     else:
         form = RoomForm(instance=room)
@@ -119,7 +125,7 @@ def delete(request, room):
     room.delete()
 
     redis = create_redis_connection()
-    redis.publish('web_channel', 'room_closed:' + str(id))
+    redis.publish('web_channel', 'room_closed:' + str(room.id))
 
     return HttpResponseRedirect(reverse('rooms.views.my_list'))
 
@@ -142,6 +148,9 @@ def add_invite(request, room, user_id):
 def delete_invite(request, room, user_id):
     if room.is_private:
         user = get_object_or_404(User, pk=user_id)
+
+        redis = create_redis_connection()
+        redis.publish('web_channel', 'kick_user_from_room:' + str(room.id) + ':' + str(user.id))
 
         room.invited.remove(user)
 
