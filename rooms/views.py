@@ -1,3 +1,4 @@
+from functools import wraps
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 import redis
@@ -18,6 +19,21 @@ from app import settings
 
 def create_redis_connection():
     return redis.Redis(host=settings.REDIS_HOST, db=settings.REDIS_DB)
+
+def room_edit(func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        request = args[0]
+        room = get_object_or_404(Room, pk=kwargs['id'])
+        del kwargs['id']
+
+        if room.owner != request.user:
+            return HttpResponseForbidden()
+
+        kwargs['room'] = room
+
+        return func(*args, **kwargs)
+    return inner
 
 def clear_room(request):
     ContactManager.create_dummy_contacts_for_game()
@@ -69,11 +85,8 @@ def create(request):
 
 @render_to('room/edit.html')
 @login_required
-def edit(request, id):
-    room = get_object_or_404(Room, pk=id)
-
-    if request.user != room.owner:
-        return HttpResponse(status=403)
+@room_edit
+def edit(request, room):
 
     if request.method == 'POST':
         form = RoomForm(request.POST, instance=room)
@@ -90,11 +103,8 @@ def edit(request, id):
 @csrf_protect
 @login_required
 @require_POST
-def delete(request, id):
-    room = get_object_or_404(Room, pk=id)
-
-    if room.owner != request.user:
-        return HttpResponseForbidden()
+@room_edit
+def delete(request, room):
 
     room.delete()
 
