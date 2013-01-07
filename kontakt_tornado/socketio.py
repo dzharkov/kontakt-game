@@ -150,6 +150,14 @@ def web_channel_handler(msg):
         if m:
             connection_manager.close_room(int(m.group(1)))
 
+        m = re.match('room_private\:(\d+)', msg.body)
+        if m:
+            connection_manager.room_became_private(int(m.group(1)))
+
+        m = re.match('kick_user_from_room\:(\d+)\:(\d+)', msg.body)
+        if m:
+            connection_manager.remove_user_from_room(int(m.group(1)), int(m.group(2)))
+
 def start_server():
     from app import settings
     game_manager.load_valid_words_from_file(settings.VALID_WORDS_FILENAME)

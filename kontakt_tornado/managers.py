@@ -53,14 +53,36 @@ class ConnectionManager(object):
     def online_users_in_room(self, room_id):
         return self._users_in_rooms[room_id].values()
 
+    def _close_connections_in_room(self, room_id):
+        for connection in self._rooms_connections[room_id].values():
+            self.remove_connection(connection)
+
     def close_room(self, room_id):
         if not room_id in self._rooms_connections:
             return
 
         self.emit_for_room(room_id, 'room_closed')
 
-        for connection in self._rooms_connections[room_id].values():
-            self.remove_connection(connection)
+        self._close_connections_in_room(room_id)
+
+    def room_became_private(self, room_id):
+        if not room_id in self._rooms_connections:
+            return
+
+        self.emit_for_room(room_id, 'room_private')
+
+        self._close_connections_in_room(room_id)
+
+    def remove_user_from_room(self, room_id, user_id):
+        if not room_id in self._rooms_connections:
+            return
+
+        if not user_id in self._users_in_rooms[room_id]:
+            return
+
+        self.emit_for_user_in_room(user_id, room_id, 'room_kick')
+
+        self._close_connections_in_room(room_id)
 
 
 connection_manager = ConnectionManager()

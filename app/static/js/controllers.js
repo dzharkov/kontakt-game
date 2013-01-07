@@ -326,6 +326,16 @@ function AppCtrl($scope, socket, $timeout) {
         document.location.href = document.getElementById('room-list-url').value;
     });
 
+    socket.on('room_private', function(data) {
+        alert('Комната стала закрытой');
+        document.location.href = document.getElementById('room-list-url').value;
+    });
+
+    socket.on('room_kick', function(data) {
+        alert('Вас выгнали из комнаты');
+        document.location.href = document.getElementById('room-list-url').value;
+    });
+
     socket.on('disconnect', function() {
     });
 }
