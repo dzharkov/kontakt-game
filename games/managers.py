@@ -296,6 +296,8 @@ class GameManager(object):
         if game.is_word_used(contact_word):
             raise GameError(u'Контакт с таким словом уже был')
 
+        self.check_word_is_valid(contact_word)
+
         if not game.can_be_contact_word(contact_word):
             raise GameError(u'Контакт с таким словом не может быть создан')
 
@@ -347,10 +349,11 @@ class GameManager(object):
     def add_master_contender(self, game, user, word):
         if not game.is_master_selecting:
             raise GameError(u'Сейчас не время выбора ведущего')
-        if len(word) < 5:
-            raise GameError(u'Слишком короткое слово')
+
         if game.is_user_already_master_contender(user):
             raise GameError(u'Вы уже предложили свое слово')
+
+        self.check_word_is_valid(word)
 
         game.add_master_contender(user, word)
         connection_manager.emit_for_user_in_room(user.id, game.room_id, 'game_word_accepted', word=word)
