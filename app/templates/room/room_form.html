@@ -2,5 +2,5 @@
     {% csrf_token %}
     {{ form.as_p }}
     <hr>
-    <input type="submit" value="Создать комнату" class="btn btn-primary pull-left"/>
+    <input type="submit" value="{{ button_text }}" class="btn btn-primary pull-left"/>
 </form>
