@@ -96,7 +96,7 @@ body {
 }
 
 #user-list{
-    background-color: #F0F0F0;
+    background-color: #FFFFFF;
 }
 
 .user-list-wrapper {
@@ -124,7 +124,7 @@ body {
 }
 
 .user-entry:hover {
-    background-color: #E0E0E0;
+    background-color: #EFEFEF;
 }
 
 .user-entry:hover .user-controls {

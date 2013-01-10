@@ -303,7 +303,7 @@ function AppCtrl($scope, socket, $timeout) {
         var contact = data.contact;
         if (contact.author_id === $scope.currentUserId) {
             $scope.switchNormal();
-            $scope.currentUser.addContact = contact;
+            $scope.currentUser.addContact(contact);
         }
         else{
             var user = $scope.users.findById(contact.author_id);
@@ -313,11 +313,11 @@ function AppCtrl($scope, socket, $timeout) {
     });
 
     socket.on('contact_canceled', function(data) {
+        RemoveContactById(data.contact_id);
         alertify.log('Контакт ' + data.contact_id + ' отменен автором');
     });
 
     socket.on('master_selection_started', function(data) {
-
         alertify.log(data.user_id + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );
     });
 
