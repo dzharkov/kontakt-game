@@ -335,7 +335,8 @@ function AppCtrl($scope, socket, $timeout) {
     });
 
     socket.on('master_contender', function(data) {
-        alertify.log(data.user_id + ' стал кандидатом на должность ведущего!');
+        var user = FindUserById(data.user_id);
+        alertify.log('Игрок ' + user.name + ' стал кандидатом на должность ведущего!');
     });
 
     socket.on('contact_creation', function(data) {
