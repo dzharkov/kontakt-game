@@ -302,6 +302,7 @@ function AppCtrl($scope, socket, $timeout) {
     socket.on('contact_creation', function(data) {
         var contact = data.contact;
         if (contact.author_id === $scope.currentUserId) {
+            $scope.switchNormal();
             $scope.currentUser.addContact = contact;
         }
         else{
