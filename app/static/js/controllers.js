@@ -63,6 +63,13 @@ function AppCtrl($scope, socket, $timeout) {
         return user;
     }
 
+    function FindUserByContactId(contactId){
+        var contactOwner = $scope.users.firstOrDefault($scope.currentUser, function(u){
+            return u.contact !== undefined && u.contact.id === contactId;
+        });
+        return contactOwner;
+    }
+
     function AddMessage(message){
         var user = FindUserById(message.author_id);
         if (user !== undefined) {            
@@ -345,8 +352,9 @@ function AppCtrl($scope, socket, $timeout) {
     });
 
     socket.on('contact_canceled', function(data) {
+        var author = FindUserByContactId(data.contact_id);
         RemoveContactById(data.contact_id);
-        alertify.log('Контакт ' + data.contact_id + ' отменен автором');
+        alertify.log('Игрок ' + author.name + ' отменил контакт');
     });
 
     socket.on('master_selection_started', function(data) {
