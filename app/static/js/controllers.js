@@ -359,12 +359,14 @@ function AppCtrl($scope, socket, $timeout) {
     });
 
     socket.on('master_selection_started', function(data) {
-        alertify.log(data.user_id + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );
+        var user = FindUserById(data.user_id);
+        alertify.log('Игрок' + user.name + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );
     });
 
     socket.on('game_running', function(data) {
         var game = data.game;
-        alertify.log('Игра началась! Ведущий ' + game.master_id + ', начало слова - ' + game.available_word_part + ', длина - ' + game.word_length);
+        var user = FindUserById(game.master_id);
+        alertify.log('Игра началась! Ведущий - ' + user.name + ', начало слова - ' + game.available_word_part + ', длина - ' + game.word_length);
     });
 
     socket.on('chat_message', function(data) {
