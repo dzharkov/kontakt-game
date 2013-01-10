@@ -36,6 +36,11 @@ function User(userData, contactData){
         this.role = "Ведущий";
     };
 
+    this.addContact = function(contactInfo) {
+        this.contact = contactInfo;
+        this.hasContact = true;
+    }
+
     this.removeContact = function(){
         if(this.contact !== undefined){
             delete this.contact;

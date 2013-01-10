@@ -40,10 +40,6 @@
                         <p><b>Отгадано</b>: {{availableWordPart}}</p>
                         <p><b>Всего букв</b>: {{wordLength}}</p>
                         <p><b>Вы</b>: {{currentUser.name}} ({{currentUser.role}}) </p>
-                        <input class="span2" type="text" ng-model="contactId"/>
-                        <button class="btn btn-danger" type="button" ng-click="cancelContact(contactId)">
-                            <i class="icon-remove icon-white"></i>  Отменить контакт
-                        </button>
                     </div>
                     <div class="game-stats" ng-switch-when="completed">
                         <h3>Игра завершена</h3>
@@ -148,6 +144,9 @@
             <div class="row">
                 <button class="btn btn-success span1" type="button" ng-click="switchCreateContact()" ng-show="!currentUser.isMaster">
                     <i class="icon-plus icon-white"></i>
+                </button>
+                <button class="btn btn-danger" type="button" ng-click="cancelContact()" ng-show="!currentUser.isMaster">
+                    <i class="icon-remove icon-white"></i>  Отменить контакт
                 </button>
                 <button class="btn span1" type="button" ng-show="currentUser.isMaster">
                     <i class="icon-pencil"></i>

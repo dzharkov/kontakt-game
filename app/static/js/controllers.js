@@ -92,8 +92,10 @@ function AppCtrl($scope, socket, $timeout) {
         socket.emit('game_word_propose', { 'word' : word });
     };
 
-    $scope.cancelContact = function(contactId) {
-        socket.emit('contact_cancel', { 'contact_id' : contactId });
+    $scope.cancelContact = function() {
+        if ($scope.currentUser.hasContact) {
+            socket.emit('contact_cancel', { 'contact_id' : $scope.currentUser.contact.id });
+        };
     };
 
     $scope.sendChatMessage = function(newChatMessage) {
@@ -286,53 +288,60 @@ function AppCtrl($scope, socket, $timeout) {
     });
 
     socket.on('master_selection_unsuccessful', function(data) {
-        alert('Не удалось выбрать ведущего');
+        alertify.error('Не удалось выбрать ведущего');
     });
 
     socket.on('game_word_accepted', function(data) {
-       alert('Ваше слово - ' + data.word + ' принято, вы - кандидат на должность ведущего!');
+       alertify.log('Ваше слово - ' + data.word + ' принято, вы - кандидат на должность ведущего!');
     });
 
     socket.on('master_contender', function(data) {
-        alert(data.user_id + ' стал кандидатом на должность ведущего!');
+        alertify.log(data.user_id + ' стал кандидатом на должность ведущего!');
     });
 
     socket.on('contact_creation', function(data) {
         var contact = data.contact;
-        alert('Новый контакт от пользователя' + contact.author_id + ' c текстом: ' + contact.desc);
+        if (contact.author_id === $scope.currentUserId) {
+            $scope.currentUser.addContact = contact;
+        }
+        else{
+            var user = $scope.users.findById(contact.author_id);
+            user.addContact(contact);
+        }
+        alertify.log('Новый контакт от пользователя' + contact.author_id + ' c текстом: ' + contact.desc);
     });
 
     socket.on('contact_canceled', function(data) {
-        alert('Контакт ' + data.contact_id + ' отменен автором');
+        alertify.log('Контакт ' + data.contact_id + ' отменен автором');
     });
 
     socket.on('master_selection_started', function(data) {
 
-        alert(data.user_id + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );
+        alertify.log(data.user_id + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );
     });
 
     socket.on('game_running', function(data) {
         var game = data.game;
-        alert('Игра началась! Ведущий ' + game.master_id + ', начало слова - ' + game.available_word_part + ', длина - ' + game.word_length);
+        alertify.log('Игра началась! Ведущий ' + game.master_id + ', начало слова - ' + game.available_word_part + ', длина - ' + game.word_length);
     });
 
     socket.on('chat_message', function(data) {
        var msg = data.msg;
-       alert('Новое сообщение от ' + msg.author_id + ' [' + msg.time + ']' + msg.text);
+       alertify.log('Новое сообщение от ' + msg.author_id + ' [' + msg.time + ']' + msg.text);
     });
 
     socket.on('room_deleted', function(data) {
-        alert('Комната удалена');
+        alertify.log('Комната удалена');
         document.location.href = document.getElementById('room-list-url').value;
     });
 
     socket.on('room_private', function(data) {
-        alert('Комната стала закрытой');
+        alertify.log('Комната стала закрытой');
         document.location.href = document.getElementById('room-list-url').value;
     });
 
     socket.on('room_kick', function(data) {
-        alert('Вас выгнали из комнаты');
+        alertify.log('Вас выгнали из комнаты');
         document.location.href = document.getElementById('room-list-url').value;
     });
 
