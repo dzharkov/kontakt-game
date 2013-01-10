@@ -63,6 +63,20 @@ function AppCtrl($scope, socket, $timeout) {
         return user;
     }
 
+    function AddMessage(message){
+        var user = FindUserById(message.author_id);
+        if (user !== undefined) {            
+            $scope.messages.push({author:user.name, text:message.text, time:message.text}); 
+            // scroll chatbox
+            var scrollDown = function() {
+                var chat = document.getElementById("chatbox");
+                chat.scrollTop = chat.scrollHeight;
+            };
+            $timeout(scrollDown, 100);
+            
+        };
+    }
+
     function RemoveContactById(contactId) {
         var contactOwner = $scope.users.firstOrDefault($scope.currentUser, function(u){
             return u.contact !== undefined && u.contact.id === contactId;
@@ -108,8 +122,10 @@ function AppCtrl($scope, socket, $timeout) {
         };
     };
 
-    $scope.sendChatMessage = function(newChatMessage) {
-        socket.emit('chat_message_send', { 'text' : newChatMessage });
+    $scope.newMessage = "";
+    $scope.sendChatMessage = function() {
+        socket.emit('chat_message_send', { 'text' : $scope.newMessage });        
+        $scope.newMessage = "";
     };
 
     $scope.switchNormal = function(){
@@ -297,10 +313,7 @@ function AppCtrl($scope, socket, $timeout) {
         var messages = room_state.chat_messages;
         for (var i = 0; i < messages.length; i++) {
             var message = messages[i];
-            var user = FindUserById(message.author_id);
-            if (user !== undefined) {            
-                $scope.messages.push({author:user.name, text:message.text, time:message.text}); 
-            };
+            AddMessage(message);
         };
 
         $scope.pageLoaded = true;
@@ -347,10 +360,7 @@ function AppCtrl($scope, socket, $timeout) {
 
     socket.on('chat_message', function(data) {
         var message = data.msg;
-        var user = FindUserById(message.author_id);
-        if (user !== undefined) {            
-            $scope.messages.push({author:user.name, text:message.text, time:message.text}); 
-        };
+        AddMessage(message);
     });
 
     socket.on('room_deleted', function(data) {

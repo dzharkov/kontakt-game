@@ -107,8 +107,8 @@
                 </div>
             </div>
             <div class="row chatwindow">
-                <div class="chat-transcript-wrapper">
-                    <section id="chatbox" class="chat-transcript">
+                <div class="chat-transcript-wrapper" id="chatbox">
+                    <section class="chat-transcript">
 
                         <div class="row" ng-repeat="message in messages">
                             <div class="span2 span-mini name">{{message.author}}</div>
@@ -120,9 +120,9 @@
                 <section class="chat-entry">
                     <div class="row">
                         <div class="span4">
-                            <input class="new-chat" type="text" ng-model="newChatMessage"/>
+                            <input class="new-chat" type="text" ng-model="newMessage"/>
                         </div>
-                        <button title="Отправить сообщение" class="btn span1" ng-click="sendChatMessage(newChatMessage)">
+                        <button title="Отправить сообщение" class="btn span1" ng-click="sendChatMessage()">
                             <i class="icon-envelope"></i>
                         </button>
                     </div>
