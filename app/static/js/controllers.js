@@ -45,12 +45,22 @@ function CompareTwoUsers (u1, u2){
 function AppCtrl($scope, socket, $timeout) {
     InitSpinner();
 
+    $scope.messages = [];
+
     function EachUser(func){
         var users = $scope.users;
         for(var i = 0; i < users.length; i++){
             func.apply(users[i]);
         }
         func.apply($scope.currentUser);
+    }
+
+    function FindUserById(id){
+        var user = $scope.users.findById(id);
+        if (id === $scope.currentUserId) {
+            user = $scope.currentUser;
+        };
+        return user;
     }
 
     function RemoveContactById(contactId) {
@@ -284,6 +294,15 @@ function AppCtrl($scope, socket, $timeout) {
             $scope.switchEndGame();
         }
 
+        var messages = room_state.chat_messages;
+        for (var i = 0; i < messages.length; i++) {
+            var message = messages[i];
+            var user = FindUserById(message.author_id);
+            if (user !== undefined) {            
+                $scope.messages.push({author:user.name, text:message.text, time:message.text}); 
+            };
+        };
+
         $scope.pageLoaded = true;
     });
 
@@ -327,8 +346,11 @@ function AppCtrl($scope, socket, $timeout) {
     });
 
     socket.on('chat_message', function(data) {
-       var msg = data.msg;
-       alertify.log('Новое сообщение от ' + msg.author_id + ' [' + msg.time + ']' + msg.text);
+        var message = data.msg;
+        var user = FindUserById(message.author_id);
+        if (user !== undefined) {            
+            $scope.messages.push({author:user.name, text:message.text, time:message.text}); 
+        };
     });
 
     socket.on('room_deleted', function(data) {

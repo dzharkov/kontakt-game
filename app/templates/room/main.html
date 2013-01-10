@@ -110,19 +110,9 @@
                 <div class="chat-transcript-wrapper">
                     <section id="chatbox" class="chat-transcript">
 
-                        <div class="row">
-                            <div class="span2 span-mini name">Пользователь 1</div>
-                            <div class="span5 span-maxi chat-text"> Привет! Ты масон! </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="span2 span-mini name"> Пользователь 2 </div>
-                            <div class="span5 span-maxi chat-text"> Здравствуй! Нет, это ты масон! </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="span2 span-mini name"> Пользователь 3 </div>
-                            <div class="span5 span-maxi chat-text"> Отнюдь, вы оба масоны! </div>
+                        <div class="row" ng-repeat="message in messages">
+                            <div class="span2 span-mini name">{{message.author}}</div>
+                            <div class="span5 span-maxi chat-text"> {{message.text}} </div>
                         </div>
 
                     </section>
