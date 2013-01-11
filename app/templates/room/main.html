@@ -139,7 +139,7 @@
 
                     </section>
                 </div>
-                <section class="chat-entry">
+                <section class="chat-entry" id="chat-entry">
                     <div class="row">
                         <div class="span4">
                             <input class="new-chat" type="text" ng-model="newMessage"/>
@@ -221,5 +221,17 @@
     </div><!--div .row-->
 </div><!--div .container-->
 {%endverbatim%}
+
+
+<script type="text/javascript">
+    window.onload = function () {        
+        var windowHeight = window.innerHeight;
+        var user_list = document.getElementById("user-list");
+        var chat_entry = document.getElementById("chat-entry");
+        var chatbox = document.getElementById("chatbox");
+        user_list.style.height = (windowHeight - user_list.offsetTop - 15) + 'px';
+        chatbox.style.height = (windowHeight - chatbox.offsetTop - chat_entry.offsetHeight - 15) + 'px';
+    }
+</script>
 
 {% endblock body %}
