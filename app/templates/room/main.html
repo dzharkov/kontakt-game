@@ -43,16 +43,32 @@
                     </div>
                     <div class="game-stats" ng-switch-when="completed">
                         <h3>Игра завершена</h3>
-                        <p><b>Отгадано</b>: {{availableWordPart}}</p>
-                        <p><b>Всего букв</b>: {{wordLength}}</p>
-                        <p><b>Вы</b>: {{currentUser.name}} ({{currentUser.role}}) </p>
-                        <button class="btn btn-danger" type="button" ng-click="startGame()">
-                            <i class="icon-remove icon-white"></i>  Начать игру
+                        <button class="btn btn-large btn-success" type="button" ng-click="startGame()">
+                              Начать новую игру
                         </button>
-                        <input class="span2" type="text" ng-model="gameWord"/>
-                        <button class="btn btn-danger" type="button" ng-click="proposeGameWord(gameWord)">
-                            <i class="icon-remove icon-white"></i>  Предлоджить слово
-                        </button>
+                    </div>
+                    <div class="game-stats span6 form-horizontal" ng-switch-when="master_selection">
+                        <h3 ng-hide="word_accepted">Выбор ведущего</h3>
+                        <h3 ng-show="word_accepted">Ваше слово принято, ожидайте начала игры</h3>
+                        <div class="row" ng-hide="word_accepted">
+                            <div class="control-group">
+                            <div class="control-label">
+                                Слово игры
+                            </div>
+                            <div class="controls">                                
+                                <input class="span2" type="text" ng-model="gameWord"/>
+                            </div>
+                        </div>
+                        <div class="row" ng-hide="word_accepted">
+                            <div class="control-group">
+                                <div class="controls">
+                                    <button class="btn btn-success span2 " type="button" ng-click="proposeGameWord(gameWord)">
+                                    Предлоджить слово
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
                     </div>
                     <div class="game-stats" ng-switch-when="notstarted">
                         <h3>Игра не начата</h3>

@@ -84,6 +84,8 @@ function AppCtrl($scope, socket, $timeout) {
         };
     }
 
+    $scope.users = [];
+
     function RemoveContactById(contactId) {
         var contactOwner = $scope.users.firstOrDefault($scope.currentUser, function(u){
             return u.contact !== undefined && u.contact.id === contactId;
@@ -139,24 +141,35 @@ function AppCtrl($scope, socket, $timeout) {
         $scope.infoBarMode = "stats";
         $scope.showUserControls = true;
         $scope.hideUpperButtons = false;
+        $scope.word_accepted = false;
+    };
+
+    $scope.switchMasterSelection = function() {
+        $scope.infoBarMode = "master_selection";
+        $scope.showUserControls = false;
+        $scope.hideUpperButtons = false;
+        $scope.word_accepted = false;
     };
 
     $scope.switchContact = function(){
         $scope.infoBarMode = "timer";
         $scope.showUserControls = false;
         $scope.hideUpperButtons = false;
+        $scope.word_accepted = false;
     };
 
     $scope.switchEndGame = function(){
         $scope.infoBarMode = "completed";
         $scope.showUserControls = false;
         $scope.hideUpperButtons = true;
+        $scope.word_accepted = false;
     };
 
     $scope.switchNotStarted = function(){
         $scope.infoBarMode = "notstarted";
         $scope.showUserControls = false;
         $scope.hideUpperButtons = true;
+        $scope.word_accepted = false;
     };
 
     function switchCreateContact(){
@@ -164,6 +177,7 @@ function AppCtrl($scope, socket, $timeout) {
             return;
         $scope.infoBarMode = "createContact";
         $scope.showUserControls = true;
+        $scope.word_accepted = false;
     }
 
     $scope.switchCreateContact = switchCreateContact;
@@ -330,6 +344,9 @@ function AppCtrl($scope, socket, $timeout) {
         if (game.state === 'not_started') {
             $scope.switchNotStarted();
         };
+        if (game.state === 'master_selection') {
+            $scope.switchMasterSelection();
+        };
 
         var messages = room_state.chat_messages;
         for (var i = 0; i < messages.length; i++) {
@@ -342,10 +359,12 @@ function AppCtrl($scope, socket, $timeout) {
 
     socket.on('master_selection_unsuccessful', function(data) {
         alertify.error('Не удалось выбрать ведущего');
+        socket.emit('room_state_request', {});
     });
 
     socket.on('game_word_accepted', function(data) {
-       alertify.log('Ваше слово - ' + data.word + ' принято, вы - кандидат на должность ведущего!');
+        $scope.word_accepted = true;
+        alertify.log('Ваше слово - ' + data.word + ' принято, вы - кандидат на должность ведущего!');
     });
 
     socket.on('master_contender', function(data) {
@@ -375,12 +394,17 @@ function AppCtrl($scope, socket, $timeout) {
     socket.on('master_selection_started', function(data) {
         var user = FindUserById(data.user_id);
         alertify.log('Игрок ' + user.name + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );
+        $scope.switchMasterSelection();
     });
 
     socket.on('game_running', function(data) {
         var game = data.game;
         var user = FindUserById(game.master_id);
+        $scope.availableWordPart = game.available_word_part;
+        $scope.wordLength = game.word_length;
+        $scope.masterId = game.master_id;
         alertify.log('Игра началась! Ведущий - ' + user.name + ', начало слова - ' + game.available_word_part + ', длина - ' + game.word_length);
+        $scope.switchNormal();
     });
 
     socket.on('chat_message', function(data) {
