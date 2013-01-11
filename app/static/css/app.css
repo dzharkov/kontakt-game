@@ -1,6 +1,6 @@
 html {
-    background-color: #cfcfcf;
     height: 100%;
+    background-color: #5e86a4;
 }
 
 body {
@@ -66,11 +66,20 @@ body {
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.25);
 }
 
+#reg-btn{
+    width: 260px;
+    height: 50px;
+    padding-top: 40px;
+    font-size: 26px;
+    text-align: center;
+    vertical-align: center;
+}
+
 .hero-unit-custom {
     color: #f3f3f3;
     text-align: center;
     text-shadow: 0 1px 3px rgba(0, 0, 0, .4), 0 0 30px rgba(0, 0, 0, .075);
-    background-color: #c45039;
+    background-color: transparent;  
     border-radius: 0px;
     margin-top: 100px;
 
@@ -228,6 +237,12 @@ body {
     width: 350px;
 }
 
+.edit-room-block {
+    background-color: white;
+    padding: 30px 5% 30px;
+    margin: 20px 50px 20px;
+}
+
 #registration-div {
     background-color: white;
 
@@ -243,6 +258,14 @@ body {
     -webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, 0.25);
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.25);
     padding: 30px 5% 30px;
+}
+
+#about-div {
+    background-color: white;
+
+    -webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.25);
+    padding: 10px 5% 10px;
 }
 
 #room-list-div {

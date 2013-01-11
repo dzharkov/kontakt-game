@@ -3,34 +3,44 @@
 {% block title %}Редактирование комнаты{% endblock title %}
 
 {% block body %}
-    <div class="row">
-        <div class="span3" id="room-form-div">
-            <h2>Изменить комнату</h2>
-            {% include 'room/room_form.html' with form=form button_text="Сохранить" %}
+<div class="container">
+        <div class="row">
+            <div class="span4 edit-room-block" >
+                <h2>Изменить комнату</h2>
+                {% include 'room/room_form.html' with form=form button_text="Сохранить" %}
+            </div>
+            
+            {% if form.instance.is_private %}
+            <div class="span4">
+                <div class="row">
+                    <div class="span4 edit-room-block">
+                        <h2>Участники</h2>
+                        <table>
+                            {% for user in invited_users %}
+                                <tr>
+                                    <td><strong>{{ user.username }}</strong></td>
+                                    <td><a class="btn btn-mini btn-danger js-csrf-submit" href="{% url rooms.views.delete_invite form.instance.id user.id %}">Удалить</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4 edit-room-block">
+                        <h2>Добавить участников</h2>
+                        <table>
+                        {% for user in users %}
+                            <tr>
+                                <td><strong>{{ user.username }}</strong></td>
+                                <td><a class="btn btn-mini btn-warning js-csrf-submit" href="{% url rooms.views.add_invite form.instance.id user.id %}">Добавить</a></td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
         </div>
-        {% if form.instance.is_private %}
-            <div class="span3 invites-list-div">
-                <h5>Участники</h5>
-                <table>
-                    {% for user in invited_users %}
-                        <tr>
-                            <td><strong>{{ user.username }}</strong></td>
-                            <td><a class="btn btn-mini btn-danger js-csrf-submit" href="{% url rooms.views.delete_invite form.instance.id user.id %}">Удалить</a></td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
-            <div class="span3 invites-list-div">
-                <h5>Добавить участников</h5>
-                <table>
-                {% for user in users %}
-                    <tr>
-                        <td><strong>{{ user.username }}</strong></td>
-                        <td><a class="btn btn-mini btn-warning js-csrf-submit" href="{% url rooms.views.add_invite form.instance.id user.id %}">Добавить</a></td>
-                    </tr>
-                {% endfor %}
-                </table>
-            </div>
-        {% endif %}
-    </div>
+</div>
 {% endblock %}

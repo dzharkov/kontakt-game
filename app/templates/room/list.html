@@ -3,34 +3,34 @@
 {% block title %}Список комнат{% endblock title %}
 
 {% block body %}
-    <div class="row">
-        <div class="span6 offset4" id="room-list-div">
-            <div class="row">
-                <h2>Список комнат</h2>
-            </div>
-            <table class="table table-striped table-condensed">
-                <thead>
-                <tr>
-                    <th>Название</th>
-                    <th>Создатель</th>
-                    <th>Людей в комнате</th>
-                    <th>Игра</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for room in rooms %}
-                <tr>
-                    <td>{{ room.name }}</td>
-                    <td>{{ room.owner }}</td>
-                    <td>{{ room.online_amount }}</td>
-                    <td>{{ room.game_state_name }}</td>
-                    <td><a class="btn btn-mini btn-primary" href="{% url rooms.views.room room.id %}" target="_blank">Войти</a>
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+<div class="container">
+    <div class="wrapper" id="room-list-div">
+        <div class="row">
+            <h2>Список комнат</h2>
         </div>
+        <table class="table table-striped table-condensed">
+            <thead>
+            <tr>
+                <th>Название</th>
+                <th>Создатель</th>
+                <th>Людей в комнате</th>
+                <th>Игра</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for room in rooms %}
+            <tr>
+                <td>{{ room.name }}</td>
+                <td>{{ room.owner }}</td>
+                <td>{{ room.online_amount }}</td>
+                <td>{{ room.game_state_name }}</td>
+                <td><a class="btn btn-mini btn-primary" href="{% url rooms.views.room room.id %}" target="_blank">Войти</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
+</div>
 {% endblock %}

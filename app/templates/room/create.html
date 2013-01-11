@@ -3,10 +3,11 @@
 {% block title %}Создание комнаты{% endblock title %}
 
 {% block body %}
-<div class="row">
-    <div class="span3 offset5" id="room-form-div">
+<div class="container">
+    <div class="wrapper" id="room-form-div">
         <h2>Создайте свою комнату</h2>
         {% include 'room/room_form.html' with form=form button_text="Создать" %}
+        <hr/>
     </div>
 </div>
 {% endblock %}
