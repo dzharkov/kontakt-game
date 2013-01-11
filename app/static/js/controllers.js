@@ -138,16 +138,25 @@ function AppCtrl($scope, socket, $timeout) {
     $scope.switchNormal = function(){
         $scope.infoBarMode = "stats";
         $scope.showUserControls = true;
+        $scope.hideUpperButtons = false;
     };
 
     $scope.switchContact = function(){
         $scope.infoBarMode = "timer";
         $scope.showUserControls = false;
+        $scope.hideUpperButtons = false;
     };
 
     $scope.switchEndGame = function(){
         $scope.infoBarMode = "completed";
         $scope.showUserControls = false;
+        $scope.hideUpperButtons = true;
+    };
+
+    $scope.switchNotStarted = function(){
+        $scope.infoBarMode = "notstarted";
+        $scope.showUserControls = false;
+        $scope.hideUpperButtons = true;
     };
 
     function switchCreateContact(){
@@ -288,9 +297,11 @@ function AppCtrl($scope, socket, $timeout) {
         var game = room_state.game;
         var users = [];
         for(var i = 0; i < room_state.users.length; i++){
-            var contactData = game.contacts.first(function(x){
-                return x.author_id === room_state.users[i].id;
-            });
+            if(game.state === 'running') {
+                var contactData = game.contacts.first(function(x){
+                    return x.author_id === room_state.users[i].id;
+                });
+            }
             var user = new User(room_state.users[i], contactData);
             if(user.id === game.master_id){
                 user.makeMaster();
@@ -316,6 +327,9 @@ function AppCtrl($scope, socket, $timeout) {
         if(game.state === 'complete'){
             $scope.switchEndGame();
         }
+        if (game.state === 'not_started') {
+            $scope.switchNotStarted();
+        };
 
         var messages = room_state.chat_messages;
         for (var i = 0; i < messages.length; i++) {
@@ -360,7 +374,7 @@ function AppCtrl($scope, socket, $timeout) {
 
     socket.on('master_selection_started', function(data) {
         var user = FindUserById(data.user_id);
-        alertify.log('Игрок' + user.name + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );
+        alertify.log('Игрок ' + user.name + ' начал игру! Предлагаем свои слова, возможно вас выберут ведущим через ' + data.seconds_left + " секунд" );
     });
 
     socket.on('game_running', function(data) {
