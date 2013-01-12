@@ -109,7 +109,6 @@ body {
 }
 
 .user-list-wrapper {
-    margin-top: 10px;
     height: 560px;
     overflow-y: auto;
 }
