@@ -27,7 +27,7 @@ class Room(models.Model):
             return None
         if not hasattr(self, '_game_state'):
             cursor = connection.cursor()
-            cursor.execute("SELECT state FROM " + GAME_TABLE_NAME + " WHERE id = %s", self.id)
+            cursor.execute("SELECT state FROM " + GAME_TABLE_NAME + " WHERE room_id = %s order by id desc limit 1", self.id)
             self._game_state = cursor.fetchone()[0]
 
         return self._game_state
