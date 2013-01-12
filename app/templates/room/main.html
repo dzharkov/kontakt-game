@@ -154,10 +154,10 @@
 
         <div class="span6">
             <div class="row" ng-hide="hideUpperButtons">
-                <button class="btn btn-success span2" type="button" ng-click="switchCreateContact()" ng-show="!currentUser.isMaster && !currentUser.hasContact">
+                <button class="btn btn-success span2" type="button" ng-click="switchCreateContact()" ng-show="isGameRunning && !currentUser.isMaster && !currentUser.hasContact">
                     <i class="icon-plus icon-white"></i> Новый контакт
                 </button>
-                <button class="btn btn-danger span3" type="button" ng-click="cancelContact()" ng-show="!currentUser.isMaster && currentUser.hasContact">
+                <button class="btn btn-danger span3" type="button" ng-click="cancelContact()" ng-show="isGameRunning && !currentUser.isMaster && currentUser.hasContact">
                     <i class="icon-remove icon-white"></i>  Отменить контакт
                 </button>
                 <button class="btn span1" type="button" ng-show="currentUser.isMaster">

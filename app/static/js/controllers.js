@@ -142,6 +142,7 @@ function AppCtrl($scope, socket, $timeout) {
 
     $scope.switchNormal = function(){
         $scope.infoBarMode = "stats";
+        $scope.isGameRunning = true;
         $scope.showUserControls = true;
         $scope.hideUpperButtons = false;
         $scope.word_accepted = false;
@@ -149,6 +150,7 @@ function AppCtrl($scope, socket, $timeout) {
 
     $scope.switchMasterSelection = function() {
         $scope.infoBarMode = "master_selection";
+        $scope.isGameRunning = false;
         $scope.showUserControls = false;
         $scope.hideUpperButtons = false;
         $scope.word_accepted = false;
@@ -163,6 +165,7 @@ function AppCtrl($scope, socket, $timeout) {
 
     $scope.switchEndGame = function(){
         $scope.infoBarMode = "completed";
+        $scope.isGameRunning = false;
         $scope.showUserControls = false;
         $scope.hideUpperButtons = true;
         $scope.word_accepted = false;
@@ -170,6 +173,7 @@ function AppCtrl($scope, socket, $timeout) {
 
     $scope.switchNotStarted = function(){
         $scope.infoBarMode = "notstarted";
+        $scope.isGameRunning = false;
         $scope.showUserControls = false;
         $scope.hideUpperButtons = true;
         $scope.word_accepted = false;
