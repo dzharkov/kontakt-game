@@ -104,7 +104,7 @@ class GameCatcher(SocketConnection):
             if contact.connected_user:
                 all_users.add(contact.connected_user)
 
-        if game.master:
+        if game.master and game.is_running:
             all_users.add(game.master)
 
         result['chat_messages'] = map(lambda x: x.json_representation, chat_manager.last_messages_in_room(self.room_id))

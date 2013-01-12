@@ -143,12 +143,13 @@ class Game(object):
 
         if self.is_running or self.is_complete:
             result = {
-                'master_id' : self.master.id,
                 'available_word_part' : self.available_word_part(),
                 'word_length' : len(self.guessed_word),
                 'state' : self.state,
                 'contacts' : [contact.json_representation for contact in self._active_contacts.values()]
             }
+            if self.is_running:
+                result['master_id'] = self.master.id
         else:
             result = {
                 'state' : self.state
