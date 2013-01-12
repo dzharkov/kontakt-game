@@ -107,6 +107,10 @@ class GameCatcher(SocketConnection):
         if game.master and game.is_running:
             all_users.add(game.master)
 
+        if game.is_master_selecting:
+            for user in game.master_contenders:
+                all_users.add(user)
+
         result['chat_messages'] = map(lambda x: x.json_representation, chat_manager.last_messages_in_room(self.room_id))
 
         result['users'] = [user.json_representation for user in all_users]

@@ -85,6 +85,10 @@ class Game(object):
     def active_contacts(self):
         return self._active_contacts.values()
 
+    @property
+    def master_contenders(self):
+        return map(lambda x: x[0], self._master_contenders.values())
+
     def letters_left(self):
         return len(self.guessed_word) - self.guessed_letters
 
@@ -154,6 +158,9 @@ class Game(object):
             result = {
                 'state' : self.state
             }
+
+        if self.is_master_selecting:
+            result['master_contenders'] = map(lambda x: { 'user_id' : x.id } , self.master_contenders)
 
         if self.last_accepted_contact:
             result['accepted_contact'] = {
