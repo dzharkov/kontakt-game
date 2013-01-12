@@ -56,7 +56,7 @@
                                 Слово игры
                             </div>
                             <div class="controls">                                
-                                <input class="span2" type="text" ng-model="gameWord"/>
+                                <input class="span2" type="text" ng-enter="proposeGameWord(gameWord)" ng-model="gameWord"/>
                             </div>
                         </div>
                         <div class="row" ng-hide="word_accepted">
@@ -84,7 +84,7 @@
                         </h2>
                         <div class="input-prepend input-append" ng-show="currentUser.isMaster">
                             <span class="add-on">{{availableWordPart}}</span>
-                            <input class="span2"type="text" ng-model="breakGuess"/>
+                            <input class="span2"type="text" ng-enter="breakContact(breakGuess)" ng-model="breakGuess"/>
                             <button class="btn btn-danger" type="button" ng-click="breakContact(breakGuess)">
                                 <i class="icon-remove icon-white"></i>  Разорвать контакт
                             </button>
@@ -98,7 +98,7 @@
                             <div class="controls">
                                 <div class="input-prepend">
                                     <span class="add-on">{{availableWordPart}}</span>
-                                    <input class="span2" type="text" ng-model="newContactValue"/>
+                                    <input class="span2" type="text" ng-enter="createContact(newContactValue, newContactDescription)" ng-model="newContactValue"/>
                                 </div>
                             </div>
                         </div>
@@ -107,7 +107,7 @@
                                 Описание
                             </div>
                             <div class="controls">
-                                <input class="span3" type="text"
+                                <input class="span3" type="text" ng-enter="createContact(newContactValue, newContactDescription)"
                                        ng-maxlength="200"
                                        ng-model="newContactDescription"/>
                             </div>
@@ -233,14 +233,14 @@
                                 <div class="span5 user-controls">
                                     <div class="input-prepend input-append"  ng-show="!currentUser.isMaster && showUserControls">
                                         <span class="add-on">{{availableWordPart}}</span>
-                                        <input class="span2 contact-suffix" ng-model="user.contact.guess" type="text"/>
+                                        <input class="span2 contact-suffix" ng-enter="acceptContact(user.contact)" ng-model="user.contact.guess" type="text"/>
                                         <button class="btn btn-success" type="button" ng-click="acceptContact(user.contact)">
                                             <i class="icon-magnet icon-white"></i>
                                             Установить контакт </button>
                                     </div>
                                     <div class="input-prepend input-append" ng-show="currentUser.isMaster  && showUserControls">
                                         <span class="add-on">{{availableWordPart}}</span>
-                                        <input class="span2"type="text" ng-model="breakGuess"/>
+                                        <input class="span2"type="text" ng-enter="breakContact(breakGuess, user.contact)" ng-model="breakGuess"/>
                                         <button class="btn btn-danger" type="button" ng-click="breakContact(breakGuess, user.contact)">
                                             <i class="icon-remove icon-white"></i>  Разорвать контакт
                                         </button>
