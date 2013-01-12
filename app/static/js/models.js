@@ -5,6 +5,15 @@ Array.prototype.first = function(clause){
     }
     return undefined;
 };
+Array.prototype.count = function(clause){
+    var amount = 0;
+    for(var i = 0; i < this.length; i++){
+        if(clause(this[i]) === true)
+           amount++;
+    }
+    return amount;
+};
+
 
 Array.prototype.firstOrDefault = function(def, clause){
     for(var i = 0; i < this.length; i++){
