@@ -115,6 +115,8 @@ class GameCatcher(SocketConnection):
 
     @event('chat_message_send')
     def on_chat_message_send(self, text):
+        if len(text.strip())==0:
+            return
         chat_manager.new_message(self.room_id, self.user, text)
 
     def emit_for_room(self, event, *args, **kwargs):

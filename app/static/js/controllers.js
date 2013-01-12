@@ -133,6 +133,9 @@ function AppCtrl($scope, socket, $timeout) {
 
     $scope.newMessage = "";
     $scope.sendChatMessage = function() {
+        if ($scope.newMessage == '') {
+            return;
+        }
         socket.emit('chat_message_send', { 'text' : $scope.newMessage });        
         $scope.newMessage = "";
     };
