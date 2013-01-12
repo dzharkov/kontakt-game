@@ -185,9 +185,12 @@
                                 </span>
                             </div>
 
-                            <div ng-switch-when="false"> <!--Пользователь, если у него нет предложения контакта-->
-                                <p class="user-text text-info">
+                            <div ng-switch-when="false" > <!--Пользователь, если у него нет предложения контакта-->
+                                <p class="user-text text-info" ng-hide="currentUser.isMaster">
                                     У пользователя пока нет предложений о контакте.
+                                </p>
+                                <p class="user-text text-info" ng-show="currentUser.isMaster">
+                                    Вы ведущий
                                 </p>
                             </div>
 
