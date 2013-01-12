@@ -59,8 +59,6 @@ class GameManager(object):
         self.last_complete_game_in_room = dict()
         self.active_contacts = dict()
         self.timeout_callbacks = []
-        for row in db.query("SELECT * FROM %s" % GAME_TABLE_NAME):
-            self.add_game_from_db_row(row)
 
         self.check_callbacks()
 
@@ -135,6 +133,9 @@ class GameManager(object):
         return contact
 
     def get_game_in_room(self, room_id):
+        if not room_id in self.current_game_in_room:
+            for row in db.query("SELECT * FROM " + GAME_TABLE_NAME + " where room_id = %s", room_id):
+                self.add_game_from_db_row(row)
         return self.current_game_in_room[room_id]
 
     def find_active_contact(self, id, game):
