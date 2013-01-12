@@ -166,6 +166,38 @@
                             <i class="icon-remove icon-white"></i>  Отменить контакт
                         </button>
                     </div>
+                    <li class="media user-entry">
+
+                        <a class="pull-left" href="#">
+                            <img class="media-object img-circle" src="/static/img/avatars/default_guy.png">
+                        </a>
+                        <div class="media-body" ng-switch on="currentUser.hasContact">
+                            <div class="row" ng-switch on="currentUser.isOnline">
+                                <h4 class="media-heading span2">{{currentUser.name}}
+                                    <span>(Это Вы)</span>
+                                </h4>
+
+                                <span class="span1 offset2 text-success" ng-switch-when="true">
+                                    <i>Online</i>
+                                </span>
+                                <span class="span1 offset2 text-error" ng-switch-when="false">
+                                    <i>Offline</i>
+                                </span>
+                            </div>
+
+                            <div ng-switch-when="false"> <!--Пользователь, если у него нет предложения контакта-->
+                                <p class="user-text text-info">
+                                    У пользователя пока нет предложений о контакте.
+                                </p>
+                            </div>
+
+                            <div ng-switch-when="true"> <!--Пользователь, если у него есть предложение контакта-->
+                                <p class="user-text">
+                                    {{currentUser.contact.desc}}
+                                </p>
+                            </div>
+                        </div>
+                    </li>
                     <li class="media user-entry" ng-repeat="user in users">
 
                         <a class="pull-left" href="#">
