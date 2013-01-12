@@ -39,10 +39,10 @@
                         <h3>Информация об игре</h3>
                         <p><b>Отгадано</b>: {{availableWordPart}}</p>
                         <p><b>Всего букв</b>: {{wordLength}}</p>
-                        <p><b>Вы</b>: {{currentUser.name}} ({{currentUser.role}}) </p>
                     </div>
                     <div class="game-stats" ng-switch-when="completed">
                         <h3>Игра завершена</h3>
+                        <p><b>Отгадано слово</b>: {{availableWordPart}}</p>
                         <button class="btn btn-large btn-success" type="button" ng-click="startGame()">
                               Начать новую игру
                         </button>
