@@ -350,10 +350,16 @@ function AppCtrl($scope, socket, $timeout) {
         }
         if (game.state === 'not_started') {
             $scope.switchNotStarted();
-        };
+        }
         if (game.state === 'master_selection') {
             $scope.switchMasterSelection();
-        };
+
+            if (game.master_contenders.count(function(x) {
+                return x.user_id == $scope.currentUserId;
+            }) > 0) {
+                $scope.word_accepted = true;
+            }
+        }
 
         var messages = room_state.chat_messages;
         for (var i = 0; i < messages.length; i++) {
