@@ -339,7 +339,7 @@ function AppCtrl($scope, socket, $timeout) {
         $scope.masterId = game.master_id;
 
         if(game.accepted_contact !== undefined){
-            AcceptedContact(game.accepted_contact);
+            AcceptedContact( { 'contact_id' : game.accepted_contact.id, 'seconds_left' : game.accepted_contact.seconds_left } );
         }
         if(game.state === 'complete'){
             $scope.switchEndGame();
