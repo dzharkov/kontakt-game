@@ -162,6 +162,7 @@ body {
     background-color: white;
     width: 100%;
     margin-left: 0px;
+    min-height: 180px;
     height: 22%;
     font-family: 'Scada';
     font-size: 18px;
