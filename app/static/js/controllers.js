@@ -425,19 +425,25 @@ function AppCtrl($scope, socket, $timeout) {
         AddMessage(message);
     });
 
+    function AlertRedirectToRoomList(message){
+        $timeout(function() {
+            document.location.href = document.getElementById('room-list-url').value;
+        }, 5000);
+        alertify.alert(message, function () {            
+            document.location.href = document.getElementById('room-list-url').value;
+        });
+    };
+
     socket.on('room_deleted', function(data) {
-        alertify.log('Комната удалена');
-        document.location.href = document.getElementById('room-list-url').value;
+        AlertRedirectToRoomList('Комната удалена');
     });
 
     socket.on('room_private', function(data) {
-        alertify.log('Комната стала закрытой');
-        document.location.href = document.getElementById('room-list-url').value;
+        AlertRedirectToRoomList('Комната стала закрытой');
     });
 
     socket.on('room_kick', function(data) {
-        alertify.log('Вас выгнали из комнаты');
-        document.location.href = document.getElementById('room-list-url').value;
+        AlertRedirectToRoomList('Вас выгнали из комнаты');
     });
 
     socket.on('disconnect', function() {
