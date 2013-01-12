@@ -54,7 +54,7 @@ class Game(object):
         self._master_contenders[user.id] = (user, proposed_word)
 
     @property
-    def master_contenders(self):
+    def master_contenders_applications(self):
         return self._master_contenders.values()
 
     @property

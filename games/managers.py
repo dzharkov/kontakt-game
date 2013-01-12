@@ -325,7 +325,7 @@ class GameManager(object):
     def choose_master(self, game):
         room_id = game.room_id
 
-        contenders = game.master_contenders
+        contenders = game.master_contenders_applications
 
         game.terminate_master_selection_process()
 
