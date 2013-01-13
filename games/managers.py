@@ -134,6 +134,9 @@ class GameManager(object):
         self.persist_entity(game, GAME_TABLE_NAME, columns)
 
     def persist_contact(self, contact):
+        if contact.is_canceled:
+            db.execute("DELETE FROM " + CONTACT_TABLE_NAME  +" WHERE id = %s", contact.id)
+            return
         if not contact.is_active:
             contact.game.add_used_word(contact.word)
 
@@ -225,6 +228,7 @@ class GameManager(object):
         if contact.is_accepted:
             raise GameError(u'Контакт уже принят')
 
+        contact.is_canceled = True
         self.remove_contact(contact)
 
         connection_manager.emit_for_room(game.room_id, 'contact_canceled', contact_id=contact_id)

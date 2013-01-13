@@ -187,11 +187,8 @@ class Contact(object):
         self.connected_at = None
 
         self.is_active = True
+        self.is_canceled = False
         self.is_successful = False
-
-    @property
-    def is_canceled(self):
-        return False
 
     @property
     def is_accepted(self):
