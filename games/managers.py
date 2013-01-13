@@ -1,48 +1,14 @@
 # -*- coding: utf-8 -*-
-from datetime import timedelta
+import random
+import heapq
+import tornado.ioloop
 from django.utils import timezone
+
 from models import *
 from exceptions import GameError
-import random
-
-from app import settings
-
-class ContactManager(object):
-    @staticmethod
-    def create_dummy_contacts_for_game():
-        from django.db import connection, transaction
-
-        cursor = connection.cursor()
-        transaction.enter_transaction_management(True)
-        try:
-            cursor.execute("SET foreign_key_checks = 0")
-            cursor.execute("TRUNCATE games_contact")
-            cursor.execute("TRUNCATE games_game")
-            cursor.execute("TRUNCATE rooms_room")
-            cursor.execute("SET foreign_key_checks = 1")
-
-            cursor.execute(u"INSERT INTO `rooms_room` VALUES (1,'Любители моделей', 2, 0, 0)")
-            cursor.execute(u"INSERT INTO `rooms_room` VALUES (2,'Экзистенциальная Россия', 2, 0, 0)")
-
-            cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2,1,'running')")
-            cursor.execute(u"INSERT INTO `games_game` VALUES (2,2,'прустота',8,2,'complete')")
-            cursor.execute(u"INSERT INTO `games_contact` VALUES (1,1,'2012-11-22 16:56:25',3,'мода','как сказала Коко Шанель, она выходит сама из себя',NULL,NULL,NULL,1,0),(2,1,'2012-11-22 17:09:04',4,'моделирование','Оно бывает имитационным, эволюционным, и изредка даже психологическим',NULL,NULL,NULL,1,0)")
-        except Exception:
-            transaction.rollback()
-            return
-        transaction.commit()
-
-    @staticmethod
-    def get_earliest_time_of_active_contacts():
-        now = timezone.now()
-        return now - timedelta(seconds=settings.CONTACT_CHECKING_TIMEOUT)
-
-
 from kontakt_tornado.database import db
 from kontakt_tornado.managers import connection_manager, user_manager
 from utils import exec_once
-import heapq
-import tornado.ioloop
 
 GAME_TABLE_NAME = 'games_game'
 CONTACT_TABLE_NAME = 'games_contact'
