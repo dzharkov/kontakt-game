@@ -1,9 +1,13 @@
-from annoying.decorators import render_to
+# -*- coding: utf-8 -*-
+import redis
+
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login, logout
+from annoying.decorators import render_to
+
 from app.forms import RegistrationForm, LoginForm
 
 def register(request):
