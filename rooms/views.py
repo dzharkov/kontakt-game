@@ -44,9 +44,19 @@ def clear_room(request):
         cursor.execute("SET foreign_key_checks = 0")
         cursor.execute("TRUNCATE games_contact")
         cursor.execute("TRUNCATE games_game")
-        cursor.execute("TRUNCATE rooms_room")
         cursor.execute("TRUNCATE rooms_room_invited")
+        cursor.execute("TRUNCATE rooms_room")
+        cursor.execute("TRUNCATE auth_user")
         cursor.execute("SET foreign_key_checks = 1")
+
+        cursor.execute(
+            u"""INSERT INTO `auth_user` VALUES
+                (1,'admin','','','admin@gmail.com','pbkdf2_sha256$10000$LMadMmTEWbI8$elibdQDsHjTFJLF6ATj4mku521Rq7ckLjiebc/U/BrY=',1,1,1,'2013-01-13 11:40:00','2012-11-22 05:43:09'),
+                (2,'john','John','Lennon','john@gmail.com','pbkdf2_sha256$10000$6YCa9QKIzUAI$VIAB/ReG83UVDiWUdLxFu1h5iYXrZ10nFbyuJCNAQTE=',0,1,0,'2013-01-13 11:13:23','2012-11-22 09:09:27'),
+                (3,'paul','Paul','McCartney','paul@gmail.com','pbkdf2_sha256$10000$0vpsba0BUF5g$pIAdXv7YYeAEvwUHCUiloz5gQh9s/WXwnPW5FQ95fXo=',0,1,0,'2013-01-13 11:12:12','2012-11-22 09:09:47'),
+                (4,'yoko','Yoko','Ono','yoko@gmail.com','pbkdf2_sha256$10000$B4bmcBiB97HB$xCU+w2FhYNu9Pa+YDIYORRJ2m82/4R3xXkEI5Te5tWc=',0,1,0,'2013-01-13 11:11:29','2012-11-22 09:11:11')
+            """
+        )
 
         cursor.execute(u"INSERT INTO `rooms_room` VALUES (1,'Любители моделей', 2, 0, 0)")
         cursor.execute(u"INSERT INTO `rooms_room` VALUES (2,'Экзистенциальная Россия', 2, 0, 0)")
