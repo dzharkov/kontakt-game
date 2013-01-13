@@ -8,6 +8,9 @@ class ChatManager(object):
     def __init__(self):
         self._recent_messages_in_room = dict()
 
+    def clear(self):
+        self._recent_messages_in_room = dict()
+
     def new_message(self, room_id, author, text):
         msg = ChatMessage()
         msg.author = author
