@@ -62,7 +62,7 @@ def clear_room(request):
         cursor.execute(u"INSERT INTO `rooms_room` VALUES (2,'Экзистенциальная Россия', 2, 0, 0)")
 
         cursor.execute(u"INSERT INTO `games_game` VALUES (1,2,'моделирование',2,1,'running')")
-        cursor.execute(u"INSERT INTO `games_game` VALUES (2,2,'прустота',8,2,'complete')")
+        cursor.execute(u"INSERT INTO `games_game` VALUES (2,2,'пустота',8,2,'complete')")
         cursor.execute(u"INSERT INTO `games_contact` VALUES (1,1,'2012-11-22 16:56:25',3,'мода','как сказала Коко Шанель, она выходит сама из себя',NULL,NULL,NULL,1,0),(2,1,'2012-11-22 17:09:04',4,'моделирование','Оно бывает имитационным, эволюционным, и изредка даже психологическим',NULL,NULL,NULL,1,0)")
     except Exception:
         transaction.rollback()
