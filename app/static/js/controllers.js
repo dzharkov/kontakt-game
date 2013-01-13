@@ -368,6 +368,15 @@ function AppCtrl($scope, socket, $timeout) {
         };
 
         $scope.pageLoaded = true;
+
+        setTimeout(function () {
+            var windowHeight = window.innerHeight;
+            var user_list = document.getElementById("user-list");
+            var chat_entry = document.getElementById("chat-entry");
+            var chatbox = document.getElementById("chatbox");
+            user_list.style.height = (windowHeight - user_list.offsetTop - 15) + 'px';
+            chatbox.style.height = (windowHeight - chatbox.offsetTop - chat_entry.offsetHeight - 15) + 'px';
+        }, 500);
     });
 
     socket.on('master_selection_unsuccessful', function(data) {
