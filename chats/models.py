@@ -10,7 +10,7 @@ class ChatMessage(object):
     @property
     def json_representation(self):
         return {
-            'author_id' : self.author.id,
+            'author_nickname' : self.author.nickname,
             'time' : self.created_at.strftime("%I:%M"),
             'text' : self.text
         }

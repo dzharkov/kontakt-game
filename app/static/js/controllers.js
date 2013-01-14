@@ -71,17 +71,13 @@ function AppCtrl($scope, socket, $timeout) {
     }
 
     function AddMessage(message){
-        var user = FindUserById(message.author_id);
-        if (user !== undefined) {            
-            $scope.messages.push({author:user.name, text:message.text, time:message.text}); 
-            // scroll chatbox
-            var scrollDown = function() {
-                var chat = document.getElementById("chatbox");
-                chat.scrollTop = chat.scrollHeight;
-            };
-            $timeout(scrollDown, 100);
-            
+        $scope.messages.push({author:message.author_nickname, text:message.text, time:message.text});
+        // scroll chatbox
+        var scrollDown = function() {
+            var chat = document.getElementById("chatbox");
+            chat.scrollTop = chat.scrollHeight;
         };
+        $timeout(scrollDown, 100);
     }
 
     $scope.users = [];
