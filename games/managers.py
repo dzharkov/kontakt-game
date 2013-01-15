@@ -165,6 +165,8 @@ class GameManager(object):
         if contact.is_connected_word_right():
             contact.is_successful = True
             for c in game.active_contacts:
+                if c != contact:
+                    c.is_canceled = True
                 self.remove_contact(c)
             game.remove_active_contacts()
             connection_manager.emit_for_room(game.room_id, 'successful_contact_connection', contact_id=contact.id, word=contact.word)
