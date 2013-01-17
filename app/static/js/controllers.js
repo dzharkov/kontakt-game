@@ -357,6 +357,7 @@ function AppCtrl($scope, socket, $timeout) {
             }
         }
 
+        $scope.messages = [];
         var messages = room_state.chat_messages;
         for (var i = 0; i < messages.length; i++) {
             var message = messages[i];
