@@ -137,7 +137,10 @@ def edit(request, room):
             if room.is_private and not was_private:
                 redis = create_redis_connection()
                 redis.publish('web_channel', 'room_private:' + str(room.id))
-                redis.hdel(redis_room_key(room.id), *redis.hkeys(redis_room_key(room.id)))
+                try:
+                    redis.hdel(redis_room_key(room.id), *redis.hkeys(redis_room_key(room.id)))
+                except:
+                    pass
 
             return HttpResponseRedirect(request.get_full_path())
     else:
@@ -159,7 +162,10 @@ def delete(request, room):
 
     redis = create_redis_connection()
     redis.publish('web_channel', 'room_deleted:' + str(room.id))
-    redis.hdel(redis_room_key(room.id), *redis.hkeys(redis_room_key(room.id)))
+    try:
+        redis.hdel(redis_room_key(room.id), *redis.hkeys(redis_room_key(room.id)))
+    except:
+        pass
 
     room.delete()
 
@@ -188,7 +194,10 @@ def delete_invite(request, room, user_id):
         redis = create_redis_connection()
         redis.publish('web_channel', 'kick_user_from_room:' + str(room.id) + ':' + str(user.id))
         session_key = redis.get('session_key:' + str(user.id))
-        redis.hdel(redis_room_key(room.id), session_key)
+        try:
+            redis.hdel(redis_room_key(room.id), session_key)
+        except:
+            pass
 
         room.invited.remove(user)
 
