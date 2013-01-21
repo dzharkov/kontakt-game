@@ -150,6 +150,7 @@ def web_channel_handler(msg):
         if msg.body == 'reload_games':
             game_manager.load_active_games()
             chat_manager.clear()
+            user_manager.clear()
             connection_manager.emit_broadcast('reload')
             return
 

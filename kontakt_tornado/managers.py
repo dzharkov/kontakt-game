@@ -90,7 +90,7 @@ connection_manager = ConnectionManager()
 class UserManager(object):
 
     def __init__(self):
-        self._users = dict()
+        self.clear()
 
     def get_user_by_id(self, id):
         id = int(id)
@@ -107,5 +107,8 @@ class UserManager(object):
         self._users[id] = user
 
         return user
+
+    def clear(self):
+        self._users = dict()
 
 user_manager = UserManager()
